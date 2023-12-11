@@ -13,6 +13,10 @@
 typedef struct struct_msg_Receive
 {
     int Receive_PotValue;
+    int Receive_Button1State;
+    int Receive_Button2State;
+    int Receive_JoyVrx;
+    int Receive_JoyVry;
 } struct_msg_Receive;
 
 // Declare the structure
@@ -23,6 +27,11 @@ unsigned long time_prev_serial = 0;
 
 Servo ESC;                   // Define the ESC
 int CtrlPWM;                 // Control Signal. Varies between [0 - 180]
+int JoyVrx;                  // X value of joy con position [0 - 4095]
+int JoyVry;                  // Y value of joy con position [0 - 4095]
+bool Button1State;           // 0 - unpressed. 1 - pressed
+bool Button2State;           // 0 - unpressed. 1 - pressed
+
 unsigned long time_prev = 0; // Variable used for serial monitoring
 // ================================================================
 // Function declaration
@@ -57,12 +66,17 @@ void loop()
 {
     // CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180); // Read the pot, map the reading from [0, 4095] to [0, 180]
     CtrlPWM = Receive_Data.Receive_PotValue;
+    Button1State = Receive_Data.Receive_Button1State;
+    Button2State = Receive_Data.Receive_Button2State;
+    JoyVrx = Receive_Data.Receive_JoyVrx;
+    JoyVry = Receive_Data.Receive_JoyVry;
+
     ESC.write(CtrlPWM); // Send the command to the ESC
 
     // Data Acquisition
     Sent_Data.Sent_PotAngle = floatMap(Receive_Data.Receive_PotValue, 0, 4095, 0, 300);
     // Data sent over espnow
-    esp_now_send(broadcastAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
+    // esp_now_send(broadcastAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
 
     if (micros() - time_prev_serial >= 20000)
     {
@@ -103,9 +117,17 @@ void WaitForKeyStroke()
 
 void SerialDataWrite()
 {
-    Serial.print(micros() / 1000);
-    Serial.print("\t");
-    Serial.print(Receive_Data.Receive_PotValue);
+    // Serial.print(micros() / 1000);
+    Serial.print("\tP: ");
+    Serial.print(CtrlPWM);
+    Serial.print("\tJX: ");
+    Serial.print(JoyVrx);
+    Serial.print("\tJY: ");
+    Serial.print(JoyVry);
+    Serial.print("\tB1: ");
+    Serial.print(Button1State);
+    Serial.print("\tB2: ");
+    Serial.print(Button2State);
     Serial.println();
 }
 
@@ -113,8 +135,8 @@ void SerialDataWrite()
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
     // debugging serial
-    Serial.print(micros() / 1000);
-    Serial.println("\tData received!");
+    // Serial.print(micros() / 1000);
+    // Serial.println("\tData received!");
     // You must copy the incoming data to the local variables
     memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
 }
