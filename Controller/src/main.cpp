@@ -19,10 +19,10 @@ uint8_t broadcastAddress[] = {0x48, 0xE7, 0x29, 0xA0, 0x11, 0x98};
 typedef struct struct_msg_Sent
 {
     int Sent_PotAngle;
-    bool Sent_Button1State;
-    bool Sent_Button2State;
     int Sent_JoyVrx;
     int Sent_JoyVry;
+    bool Sent_Button1State;
+    bool Sent_Button2State;
 } struct_msg_Sent;
 
 // Declare the structure
@@ -34,14 +34,14 @@ esp_now_peer_info_t peerInfo;
 // Serial
 unsigned long time_prev_serial = 0;
 
-Servo ESC;                   // Define the ESC
+Servo ESC; // Define the ESC
 
 // Components declaration
-int CtrlPWM;                 // Control Signal. Varies between [0 - 180]
-int JoyVrx;
-int JoyVry;
-bool Button1State;
-bool Button2State;
+int CtrlPWM = 0; // Control Signal. Varies between [0 - 180]
+int JoyVrx = 0;
+int JoyVry = 0;
+bool Button1State = false;
+bool Button2State = false;
 
 // Variables for calibrate joystick
 int xMin = 0;
@@ -70,15 +70,11 @@ void espnow_initialize();
 // ================================================================
 void setup()
 {
+    espnow_initialize();
     Init_Serial(); // Initialize the serial communication
     Serial.begin(115200);
-    espnow_initialize();
-
-    // pinMode(POT_PIN, INPUT);
-    pinMode(JOYSTICK_VRX_PIN, INPUT);
-    pinMode(JOYSTICK_VRY_PIN, INPUT);
-    pinMode(BUTTON_1_PIN, INPUT_PULLDOWN);
-    pinMode(BUTTON_2_PIN, INPUT_PULLDOWN);
+    pinMode(BUTTON_1_PIN, HIGH);
+    pinMode(BUTTON_2_PIN, HIGH);
 }
 
 // ================================================================
@@ -86,35 +82,43 @@ void setup()
 // ================================================================
 void loop()
 {
-    CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 180, 0); // Read the pot, map the reading from [0, 4095] to [0, 180]
+    CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180); // Read the pot, map the reading from [0, 4095] to [0, 180]
 
     // Read Joystick Values
     JoyVrx = analogRead(JOYSTICK_VRX_PIN);
     JoyVry = analogRead(JOYSTICK_VRY_PIN);
 
     // Read Button States
-    Button1State = digitalRead(BUTTON_1_PIN) == HIGH; // Button is active-high
-    Button2State = digitalRead(BUTTON_2_PIN) == HIGH; // Button is active-high
+    Button1State = digitalRead(BUTTON_1_PIN); // Button is active-high
+    Button2State = digitalRead(BUTTON_2_PIN); // Button is active-high
 
     // Calibrate joystick
-    if(JoyVrx < xMid) {
+    if (JoyVrx < xMid)
+    {
         xMapped = map(JoyVrx, xMin, xMid, 0, 2047);
-    } else {
+    }
+    else
+    {
         xMapped = map(JoyVrx, xMid, xMax, 2047, 4095);
     }
-    
-    if(JoyVry < yMid) {
+
+    if (JoyVry < yMid)
+    {
         yMapped = map(JoyVry, yMin, yMid, 0, 2047);
-    } else {
+    }
+    else
+    {
         yMapped = map(JoyVry, yMid, yMax, 2047, 4095);
     }
 
     // Update Sent Data with Joystick and Button Values
     Sent_Data.Sent_PotAngle = CtrlPWM; // Send the joystick X value
-    Sent_Data.Sent_Button1State = Button1State;
-    Sent_Data.Sent_Button2State = Button2State;
+    // Sent_Data.Sent_JoyVrx = JoyVrx;
+    // Sent_Data.Sent_JoyVry = JoyVry;
     Sent_Data.Sent_JoyVrx = xMapped;
     Sent_Data.Sent_JoyVry = yMapped;
+    Sent_Data.Sent_Button1State = Button1State;
+    Sent_Data.Sent_Button2State = Button2State;
 
     // Data sent over espnow
     esp_now_send(broadcastAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
@@ -134,9 +138,9 @@ void loop()
         Serial.print("\tP: ");
         Serial.print(CtrlPWM);
         Serial.print("\tJX: ");
-        Serial.print(xMapped);
+        Serial.print(JoyVrx);
         Serial.print("\tJY: ");
-        Serial.print(yMapped);
+        Serial.print(JoyVry);
         Serial.print("\tB1: ");
         Serial.print(Button1State);
         Serial.print("\tB2: ");

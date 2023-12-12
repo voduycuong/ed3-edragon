@@ -7,16 +7,16 @@
 // ================================================================
 #define MAX_SIGNAL 2000 // Parameter required for the ESC definition
 #define MIN_SIGNAL 1000 // Parameter required for the ESC definition
-#define MOTOR_PIN 13    // Pin 13 attached to the ESC signal pin
+// #define MOTOR_PIN 13    // Pin 13 attached to the ESC signal pin
 
 // Define the incoming data, RECEIVED into this board
 typedef struct struct_msg_Receive
 {
     int Receive_PotValue;
-    int Receive_Button1State;
-    int Receive_Button2State;
     int Receive_JoyVrx;
     int Receive_JoyVry;
+    bool Receive_Button1State;
+    bool Receive_Button2State;
 } struct_msg_Receive;
 
 // Declare the structure
@@ -25,12 +25,12 @@ struct_msg_Receive Receive_Data;
 // Serial
 unsigned long time_prev_serial = 0;
 
-Servo ESC;                   // Define the ESC
-int CtrlPWM;                 // Control Signal. Varies between [0 - 180]
-int JoyVrx;                  // X value of joy con position [0 - 4095]
-int JoyVry;                  // Y value of joy con position [0 - 4095]
-bool Button1State;           // 0 - unpressed. 1 - pressed
-bool Button2State;           // 0 - unpressed. 1 - pressed
+Servo ESC;                 // Define the ESC
+int CtrlPWM = 0;           // Control Signal. Varies between [0 - 180]
+int JoyVrx = 0;            // X value of joy con position [0 - 4095]
+int JoyVry = 0;            // Y value of joy con position [0 - 4095]
+bool Button1State = false; // 0 - unpressed. 1 - pressed
+bool Button2State = false; // 0 - unpressed. 1 - pressed
 
 unsigned long time_prev = 0; // Variable used for serial monitoring
 // ================================================================
@@ -50,13 +50,11 @@ void espnow_initialize();
 // ================================================================
 void setup()
 {
-    Init_Serial();                                 // Initialize the serial communication
-    ESC.attach(MOTOR_PIN, MIN_SIGNAL, MAX_SIGNAL); // Initialize the ESC
+    Init_Serial(); // Initialize the serial communication
+    // ESC.attach(MOTOR_PIN, MIN_SIGNAL, MAX_SIGNAL); // Initialize the ESC
 
-    
-
-    Serial.begin(115200);
     espnow_initialize();
+    Serial.begin(115200);
 }
 
 // ================================================================
@@ -65,12 +63,12 @@ void setup()
 void loop()
 {
     CtrlPWM = Receive_Data.Receive_PotValue;
-    Button1State = Receive_Data.Receive_Button1State;
-    Button2State = Receive_Data.Receive_Button2State;
     JoyVrx = Receive_Data.Receive_JoyVrx;
     JoyVry = Receive_Data.Receive_JoyVry;
+    Button1State = Receive_Data.Receive_Button1State;
+    Button2State = Receive_Data.Receive_Button2State;
 
-    ESC.write(CtrlPWM); // Send the command to the ESC
+    // ESC.write(CtrlPWM); // Send the command to the ESC
 
     if (micros() - time_prev_serial >= 20000)
     {
@@ -78,7 +76,7 @@ void loop()
         SerialDataWrite();
     }
 
-    SerialDataPrint(); // Print data on the serial monitor for debugging
+    // SerialDataPrint(); // Print data on the serial monitor for debugging
 }
 // ================================================================
 // Function Definition
@@ -111,7 +109,7 @@ void WaitForKeyStroke()
 
 void SerialDataWrite()
 {
-    // Serial.print(micros() / 1000);
+    Serial.print(micros() / 1000);
     Serial.print("\tP: ");
     Serial.print(CtrlPWM);
     Serial.print("\tJX: ");
