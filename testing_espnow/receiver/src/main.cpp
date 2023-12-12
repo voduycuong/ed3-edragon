@@ -64,7 +64,6 @@ void setup()
 // ================================================================
 void loop()
 {
-    // CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180); // Read the pot, map the reading from [0, 4095] to [0, 180]
     CtrlPWM = Receive_Data.Receive_PotValue;
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
@@ -72,11 +71,6 @@ void loop()
     JoyVry = Receive_Data.Receive_JoyVry;
 
     ESC.write(CtrlPWM); // Send the command to the ESC
-
-    // Data Acquisition
-    Sent_Data.Sent_PotAngle = floatMap(Receive_Data.Receive_PotValue, 0, 4095, 0, 300);
-    // Data sent over espnow
-    // esp_now_send(broadcastAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
 
     if (micros() - time_prev_serial >= 20000)
     {
