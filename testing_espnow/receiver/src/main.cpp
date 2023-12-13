@@ -26,6 +26,10 @@ struct_msg_Receive Receive_Data;
 unsigned long time_prev_serial = 0;
 
 Servo ESC;                 // Define the ESC
+Servo ESC;                 // Define the ESC
+Servo ESC;                 // Define the ESC
+Servo ESC;                 // Define the ESC
+
 int CtrlPWM = 0;           // Control Signal. Varies between [0 - 180]
 int JoyVrx = 0;            // X value of joy con position [0 - 4095]
 int JoyVry = 0;            // Y value of joy con position [0 - 4095]
@@ -68,7 +72,7 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    // ESC.write(CtrlPWM); // Send the command to the ESC
+    ESC.write(CtrlPWM); // Send the command to the ESC
 
     if (micros() - time_prev_serial >= 20000)
     {
