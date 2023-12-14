@@ -11,6 +11,13 @@
 // ================================================================
 // Most of the variables are declared in the personal library
 // Define the incoming data, RECEIVED into this board
+#define MOTOR_LEFT1_PIN 32      // Pin 25 attached to ESC signal pin
+#define MOTOR_LEFT2_PIN 33      // Pin 33 attached to ESC signal pin
+#define MOTOR_RIGHT1_PIN 18      // Pin 18 attached to ESC signal pin
+#define MOTOR_RIGHT2_PIN 19      // Pin 19 attached to ESC signal pin
+#define MAX_SIGNAL 2000   // Parameter required for ESC definition
+#define MIN_SIGNAL 1000   // Parameter required for the ESC definition
+
 typedef struct struct_msg_Receive
 {
   int Receive_PotValue;
@@ -26,7 +33,10 @@ struct_msg_Receive Receive_Data;
 // Serial
 unsigned long time_prev_serial = 0;
 
-Servo ESC;                 // Define the ESC
+Servo ESC_Left1;                 // Define the ESC
+Servo ESC_Left2;                 // Define the ESC
+Servo ESC_Right1;                 // Define the ESC
+Servo ESC_Right2;                 // Define the ESC
 int CtrlPWM = 0;           // Control Signal. Varies between [0 - 180]
 int JoyVrx = 0;            // X value of joy con position [0 - 4095]
 int JoyVry = 0;            // Y value of joy con position [0 - 4095]
@@ -42,6 +52,8 @@ void SerialDataWrite(); // Data from the PC to the microcontroller
 void Init_Serial();      // Function to init the serial monitor
 void WaitForKeyStroke(); // Function to interact with the serial monitor
 
+void Init_ESC();
+
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 float floatMap(float, float, float, float, float);
 void espnow_initialize();
@@ -54,7 +66,7 @@ void setup()
   // Init_MPU();      // Initialize the MPU
   // Init_MotorPin(); // Initialize the motor pin
   // Init_PID();      // Initialize the PID
-
+  Init_ESC();   // Initializa ESC
   espnow_initialize();
 }
 // ================================================================
@@ -74,7 +86,10 @@ void loop()
   Button1State = Receive_Data.Receive_Button1State;
   Button2State = Receive_Data.Receive_Button2State;
 
-  // ESC.write(CtrlPWM); // Send the command to the ESC
+  ESC_Left1.write(CtrlPWM); // Send the command to the ESC
+  ESC_Left2.write(CtrlPWM); // Send the command to the ESC
+  ESC_Right1.write(CtrlPWM); // Send the command to the ESC
+  ESC_Right2.write(CtrlPWM); // Send the command to the ESC
 
   if (micros() - time_prev_serial >= 20000)
   {
@@ -170,6 +185,18 @@ void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
   // Serial.println("\tData received!");
   // You must copy the incoming data to the local variables
   memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
+}
+
+void Init_ESC()
+{
+  ESC_Left1.attach(MOTOR_LEFT1_PIN, MIN_SIGNAL, MAX_SIGNAL);
+  ESC_Left2.attach(MOTOR_LEFT2_PIN, MIN_SIGNAL, MAX_SIGNAL);
+  ESC_Right1.attach(MOTOR_RIGHT1_PIN, MIN_SIGNAL, MAX_SIGNAL);
+  ESC_Right2.attach(MOTOR_RIGHT2_PIN, MIN_SIGNAL, MAX_SIGNAL);
+  // ESC_Left1.writeMicroseconds(MIN_SIGNAL);
+  // ESC_Left2.writeMicroseconds(MIN_SIGNAL);
+  // ESC_Right1.writeMicroseconds(MIN_SIGNAL);
+  // ESC_Right2.writeMicroseconds(MIN_SIGNAL);
 }
 
 // ******************************************
