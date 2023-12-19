@@ -1,20 +1,24 @@
 #include <Arduino.h>
+#include <ESP32Servo.h>
 
 #define MOTOR_LEFT1_PIN 32      // Pin 32 attached to ESC signal pin
 #define MOTOR_LEFT2_PIN 33      // Pin 33 attached to ESC signal pin
 #define MOTOR_RIGHT1_PIN 18      // Pin 18 attached to ESC signal pin
-#define MOTOR_RIGHT2_PIN 19      // Pin 19 attached to ESC signal pin
+#define MOTOR_RIGHT2_PIN 19      // Pin 19 attached to ESC signal pin\
 
-// #define PWM_FREQ 30000
-// #define PWM_RES 8
 
-// void Init_MotorPin()
-// {
-//   const int MOTOR_LEFT1_PIN = 32;      // Pin 32 attached to ESC signal pin
-//   const int MOTOR_LEFT2_PIN = 33;      // Pin 33 attached to ESC signal pin
-//   const int MOTOR_RIGHT1_PIN = 18;     // Pin 18 attached to ESC signal pin
-//   const int MOTOR_RIGHT2_PIN = 19      // Pin 19 attached to ESC signal pin
-// }
+Servo ESC_Left1;
+Servo ESC_Left2;
+Servo ESC_Right1;
+Servo ESC_Right2;
+
+void Init_ESC()
+{
+  ESC_Left1.attach(MOTOR_LEFT1_PIN, MIN_SIGNAL, MAX_SIGNAL);
+  ESC_Left2.attach(MOTOR_LEFT2_PIN, MIN_SIGNAL, MAX_SIGNAL);
+  ESC_Right1.attach(MOTOR_RIGHT1_PIN, MIN_SIGNAL, MAX_SIGNAL);
+  ESC_Right2.attach(MOTOR_RIGHT2_PIN, MIN_SIGNAL, MAX_SIGNAL);
+}
 
 void Run_Motor_Left1()
 {
