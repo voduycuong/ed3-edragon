@@ -6,11 +6,10 @@
 #define MOTOR_RIGHT1_PIN 18      // Pin 18 attached to ESC signal pin
 #define MOTOR_RIGHT2_PIN 19      // Pin 19 attached to ESC signal pin\
 
-
-Servo ESC_Left1;
-Servo ESC_Left2;
-Servo ESC_Right1;
-Servo ESC_Right2;
+Servo ESC_Left1;     // Define ESC
+Servo ESC_Left2;     // Define ESC
+Servo ESC_Right1;    // Define ESC
+Servo ESC_Right2;    // Define ESC
 
 void Init_ESC()
 {
