@@ -11,8 +11,6 @@
 // ================================================================
 // Most of the variables are declared in the personal library
 // Define the incoming data, RECEIVED into this board
-#define MAX_SIGNAL 2000   // Parameter required for ESC definition
-#define MIN_SIGNAL 1000   // Parameter required for the ESC definition
 
 typedef struct struct_msg_Receive
 {
