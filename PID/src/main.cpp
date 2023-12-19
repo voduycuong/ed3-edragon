@@ -11,7 +11,7 @@
 // ================================================================
 // Most of the variables are declared in the personal library
 // Define the incoming data, RECEIVED into this board
-#define MOTOR_LEFT1_PIN 32      // Pin 25 attached to ESC signal pin
+#define MOTOR_LEFT1_PIN 32      // Pin 32 attached to ESC signal pin
 #define MOTOR_LEFT2_PIN 33      // Pin 33 attached to ESC signal pin
 #define MOTOR_RIGHT1_PIN 18      // Pin 18 attached to ESC signal pin
 #define MOTOR_RIGHT2_PIN 19      // Pin 19 attached to ESC signal pin
@@ -85,11 +85,6 @@ void loop()
   JoyVry = Receive_Data.Receive_JoyVry;
   Button1State = Receive_Data.Receive_Button1State;
   Button2State = Receive_Data.Receive_Button2State;
-
-  ESC_Left1.write(CtrlPWM); // Send the command to the ESC
-  ESC_Left2.write(CtrlPWM); // Send the command to the ESC
-  ESC_Right1.write(CtrlPWM); // Send the command to the ESC
-  ESC_Right2.write(CtrlPWM); // Send the command to the ESC
 
   if (micros() - time_prev_serial >= 20000)
   {
