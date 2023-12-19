@@ -18,6 +18,9 @@
 #define MAX_SIGNAL 2000   // Parameter required for ESC definition
 #define MIN_SIGNAL 1000   // Parameter required for the ESC definition
 
+// Insert the MAC address of the other board
+uint8_t controllerAddress[] = {0x48, 0xE7, 0x29, 0x9F, 0xDE, 0x7C};
+
 typedef struct struct_msg_Receive
 {
   int Receive_PotValue;
@@ -27,8 +30,24 @@ typedef struct struct_msg_Receive
   bool Receive_Button2State;
 } struct_msg_Receive;
 
+// Define the incoming data
+typedef struct struct_msg_Sent
+{
+  int Sent_GPS_val; // replace with TinyGPSPlus object later
+  float Sent_AngleX;
+  float Sent_AngleY;
+  float Sent_AngleZ;
+  float Sent_GyroX;
+  float Sent_GyroY;
+  float Sent_GyroZ;
+  float Sent_AccX;
+  float Sent_AccY;
+  float Sent_AccZ;
+} struct_msg_Sent;
+
 // Declare the structure
 struct_msg_Receive Receive_Data;
+struct_msg_Sent Sent_Data;
 
 // Serial
 unsigned long time_prev_serial = 0;
@@ -42,6 +61,17 @@ int JoyVrx = 0;            // X value of joy con position [0 - 4095]
 int JoyVry = 0;            // Y value of joy con position [0 - 4095]
 bool Button1State = false; // 0 - unpressed. 1 - pressed
 bool Button2State = false; // 0 - unpressed. 1 - pressed
+
+int GpsVal = 1;
+int AngleX = 2;
+int AngleY = 2;
+int AngleZ = 2;
+int GyroX = 3;
+int GyroY = 3;
+int GyroZ = 3;
+int AccX = 4;
+int AccY = 4;
+int AccZ = 4;
 // ================================================================
 // Function Declaration
 // ================================================================
@@ -54,6 +84,7 @@ void WaitForKeyStroke(); // Function to interact with the serial monitor
 
 void Init_ESC();
 
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 float floatMap(float, float, float, float, float);
 void espnow_initialize();
@@ -90,6 +121,20 @@ void loop()
   ESC_Left2.write(CtrlPWM); // Send the command to the ESC
   ESC_Right1.write(CtrlPWM); // Send the command to the ESC
   ESC_Right2.write(CtrlPWM); // Send the command to the ESC
+
+  // Set data value to be sent
+  Sent_Data.Sent_GPS_val = 1;
+  Sent_Data.Sent_AngleX = 11;
+  Sent_Data.Sent_AngleY = 11;
+  Sent_Data.Sent_AngleZ = 11;
+  Sent_Data.Sent_GyroX = 111;
+  Sent_Data.Sent_GyroY = 111;
+  Sent_Data.Sent_GyroZ = 111;
+  Sent_Data.Sent_AccX = 1111;
+  Sent_Data.Sent_AccY = 1111;
+  Sent_Data.Sent_AccZ = 1111;
+  // Data sent over espnow
+  esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
 
   if (micros() - time_prev_serial >= 20000)
   {
@@ -163,21 +208,30 @@ void SerialDataWrite()
   //     received_chars = "";
   //   }
   // }
-  Serial.print(micros() / 1000);
-  Serial.print("\tP: ");
-  Serial.print(CtrlPWM);
-  Serial.print("\tJX: ");
-  Serial.print(JoyVrx);
-  Serial.print("\tJY: ");
-  Serial.print(JoyVry);
-  Serial.print("\tB1: ");
-  Serial.print(Button1State);
-  Serial.print("\tB2: ");
-  Serial.print(Button2State);
-  Serial.println();
+  // Serial.print(micros() / 1000);
+  // Serial.print("\tP: ");
+  // Serial.print(CtrlPWM);
+  // Serial.print("\tJX: ");
+  // Serial.print(JoyVrx);
+  // Serial.print("\tJY: ");
+  // Serial.print(JoyVry);
+  // Serial.print("\tB1: ");
+  // Serial.print(Button1State);
+  // Serial.print("\tB2: ");
+  // Serial.print(Button2State);
+  // Serial.println();
 }
 
 // ******************************************
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+{
+  // There is nothing to do when sending data, this is just for debugging
+  Serial.print(micros() / 1000);
+  Serial.println("\tData sent!");
+  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+}
+
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
   // debugging serial
@@ -208,11 +262,24 @@ float floatMap(float x, float in_min, float in_max, float out_min, float out_max
 // ******************************************
 void espnow_initialize()
 {
+  // Set device as a Wifi station
   WiFi.mode(WIFI_STA);
+  // Initialize esp now
   if (esp_now_init() != ESP_OK)
   {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
+  esp_now_register_send_cb(OnDataSent);
   esp_now_register_recv_cb(OnDataReceive);
+
+  esp_now_peer_info_t peerInfo;
+  memcpy(peerInfo.peer_addr, controllerAddress, sizeof(Sent_Data));
+  peerInfo.channel = 0;
+  peerInfo.encrypt = false;
+
+  if(esp_now_add_peer(&peerInfo) != ESP_OK) {
+    Serial.println(F("Failed to add peer"));
+    return;
+  }
 }

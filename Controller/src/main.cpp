@@ -13,7 +13,7 @@
 #define BUTTON_2_PIN 36
 
 // Insert the MAC address of the other board
-uint8_t broadcastAddress[] = {0x48, 0xE7, 0x29, 0xA0, 0x11, 0x98};
+uint8_t droneAddress[] = {0x48, 0xE7, 0x29, 0xA0, 0x11, 0x98};
 
 // Define the outgoing data, SENT out from this board
 typedef struct struct_msg_Sent
@@ -25,8 +25,23 @@ typedef struct struct_msg_Sent
     bool Sent_Button2State;
 } struct_msg_Sent;
 
+// Define the incoming data
+typedef struct struct_msg_Receive {
+    int Receive_GPS_val; // replace with TinyGPSPlus object later
+    float Receive_AngleX;
+    float Receive_AngleY;
+    float Receive_AngleZ;
+    float Receive_GyroX;
+    float Receive_GyroY;
+    float Receive_GyroZ;
+    float Receive_AccX;
+    float Receive_AccY;
+    float Receive_AccZ;
+} struct_msg_Receive;
+
 // Declare the structure
 struct_msg_Sent Sent_Data;
+struct_msg_Receive Receive_Data;
 
 // Variable for espnow communication
 esp_now_peer_info_t peerInfo;
@@ -42,6 +57,18 @@ int JoyVrx = 0;
 int JoyVry = 0;
 bool Button1State = false;
 bool Button2State = false;
+
+// Received values
+int GpsVal = 0;
+int AngleX = 0;
+int AngleY = 0;
+int AngleZ = 0;
+int GyroX = 0;
+int GyroY = 0;
+int GyroZ = 0;
+int AccX = 0;
+int AccY = 0;
+int AccZ = 0;
 
 // Variables for calibrate joystick
 int xMin = 0;
@@ -63,6 +90,7 @@ void WaitForKeyStroke(); // Function to interact with the serial monitor
 void SerialDataWrite();
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
+void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 void espnow_initialize();
 
 // ================================================================
@@ -82,6 +110,17 @@ void setup()
 // ================================================================
 void loop()
 {
+    GpsVal = Receive_Data.Receive_GPS_val;
+    AngleX = Receive_Data.Receive_AngleX;
+    AngleY = Receive_Data.Receive_AngleY;
+    AngleZ = Receive_Data.Receive_AngleZ;
+    GyroX = Receive_Data.Receive_GyroX;
+    GyroY = Receive_Data.Receive_GyroY;
+    GyroZ = Receive_Data.Receive_GyroZ;
+    AccX = Receive_Data.Receive_AccX;
+    AccY = Receive_Data.Receive_AccY;
+    AccZ = Receive_Data.Receive_AccZ;
+
     CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180); // Read the pot, map the reading from [0, 4095] to [0, 180]
 
     // Read Joystick Values
@@ -113,15 +152,13 @@ void loop()
 
     // Update Sent Data with Joystick and Button Values
     Sent_Data.Sent_PotAngle = CtrlPWM; // Send the joystick X value
-    // Sent_Data.Sent_JoyVrx = JoyVrx;
-    // Sent_Data.Sent_JoyVry = JoyVry;
     Sent_Data.Sent_JoyVrx = xMapped;
     Sent_Data.Sent_JoyVry = yMapped;
     Sent_Data.Sent_Button1State = Button1State;
     Sent_Data.Sent_Button2State = Button2State;
 
     // Data sent over espnow
-    esp_now_send(broadcastAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
+    esp_now_send(droneAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
 
     if (micros() - time_prev_serial >= 20000)
     {
@@ -135,17 +172,37 @@ void loop()
         // time_prev = millis();
         time_prev = micros();
         Serial.print(millis());
-        Serial.print("\tP: ");
-        Serial.print(CtrlPWM);
-        Serial.print("\tJX: ");
-        Serial.print(JoyVrx);
-        Serial.print("\tJY: ");
-        Serial.print(JoyVry);
-        Serial.print("\tB1: ");
-        Serial.print(Button1State);
-        Serial.print("\tB2: ");
-        Serial.print(Button2State);
+        Serial.print("\tGPS: ");
+        Serial.print(GpsVal);
+        Serial.print("\tAngleX: ");
+        Serial.print(AngleX);
+        Serial.print("\tAngleY: ");
+        Serial.print(AngleY);
+        Serial.print("\tAngleZ: ");
+        Serial.print(AngleZ);
+        Serial.print("\tGX: ");
+        Serial.print(GyroX);
+        Serial.print("\tGY: ");
+        Serial.print(GyroY);
+        Serial.print("\tGZ: ");
+        Serial.print(GyroZ);
+        Serial.print("\tAccX: ");
+        Serial.print(AccX);
+        Serial.print("\tAccY: ");
+        Serial.print(AccY);
+        Serial.print("\tAccZ: ");
+        Serial.print(AccZ);
         Serial.println();
+        // Serial.print(CtrlPWM);
+        // Serial.print("\tJX: ");
+        // Serial.print(JoyVrx);
+        // Serial.print("\tJY: ");
+        // Serial.print(JoyVry);
+        // Serial.print("\tB1: ");
+        // Serial.print(Button1State);
+        // Serial.print("\tB2: ");
+        // Serial.print(Button2State);
+        // Serial.println();
     }
 }
 
@@ -197,6 +254,15 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
     // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
+void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
+{
+    // debugging serial
+    // Serial.print(micros() / 1000);
+    // Serial.println("\tData received!");
+    // You must copy the incoming data to the local variables
+    memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
+}
+
 // ******************************************
 void espnow_initialize()
 {
@@ -209,7 +275,7 @@ void espnow_initialize()
     esp_now_register_send_cb(OnDataSent);
 
     // Register peer
-    memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+    memcpy(peerInfo.peer_addr, droneAddress, 6);
     peerInfo.channel = 0;
     peerInfo.encrypt = false;
 
