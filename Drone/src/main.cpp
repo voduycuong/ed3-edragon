@@ -54,9 +54,9 @@ void setup()
 {
     espnow_initialize();
     Init_Serial(); // Initialize Serial Communication
-    // Init_MPU();    // Initialize MPU
-    // Init_PID();    // Initialize PID
-    Init_ESC(); // Initializa ESC
+    Init_MPU();    // Initialize MPU
+    Init_PID();    // Initialize PID
+    Init_ESC();    // Initializa ESC
 }
 // ================================================================
 // Loop function
@@ -69,10 +69,10 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    // Get_MPUangle(); // Get the angle from the IMU sensor
-    // Compute_PID();  // Compute the PID output (motor_cmd)
-    Run_Motor(); // Send the PID output (motor_cmd) to the motor
-    // SerialDataPrint(); // Print the data on the serial monitor for debugging
+    Get_MPUangle(); // Get the angle from the IMU sensor
+    // Compute_PID();     // Compute the PID output (motor_cmd)
+    // Run_Motor();       // Send the PID output (motor_cmd) to the motor
+    SerialDataPrint(); // Print the data on the serial monitor for debugging
     SerialDataWrite(); // User data to tune the PID parameters
 
     if (micros() - time_prev_serial >= 20000)
@@ -94,7 +94,9 @@ void SerialDataPrint()
         Serial.print("\t");
         Serial.print(anglex);
         Serial.print("\t");
-        Serial.print(motor_cmd);
+        Serial.print(angley);
+        Serial.print("\t");
+        Serial.print(anglez);
         Serial.print("\t");
         Serial.print(kp);
         Serial.print("\t");
@@ -103,6 +105,8 @@ void SerialDataPrint()
         Serial.print(kd);
         Serial.print("\t");
         Serial.print(anglex_setpoint);
+        Serial.print(angley_setpoint);
+        Serial.print(anglez_setpoint);
 
         Serial.println();
     }
@@ -117,36 +121,36 @@ void SerialDataPrint()
 
 void SerialDataWrite()
 {
-    // static String received_chars;
-    // while (Serial.available())
-    // {
-    //   char inChar = (char)Serial.read();
-    //   received_chars += inChar;
-    //   if (inChar == '\n')
-    //   {
-    //     switch (received_chars[0])
-    //     {
-    //     case 'p':
-    //       received_chars.remove(0, 1);
-    //       kp = received_chars.toFloat();
-    //       break;
-    //     case 'i':
-    //       received_chars.remove(0, 1);
-    //       ki = received_chars.toFloat();
-    //       break;
-    //     case 'd':
-    //       received_chars.remove(0, 1);
-    //       kd = received_chars.toFloat();
-    //       break;
-    //     case 's':
-    //       received_chars.remove(0, 1);
-    //       anglex_setpoint = received_chars.toFloat();
-    //     default:
-    //       break;
-    //     }
-    //     received_chars = "";
-    //   }
-    // }
+    static String received_chars;
+    while (Serial.available())
+    {
+        char inChar = (char)Serial.read();
+        received_chars += inChar;
+        if (inChar == '\n')
+        {
+            switch (received_chars[0])
+            {
+            case 'p':
+                received_chars.remove(0, 1);
+                kp = received_chars.toFloat();
+                break;
+            case 'i':
+                received_chars.remove(0, 1);
+                ki = received_chars.toFloat();
+                break;
+            case 'd':
+                received_chars.remove(0, 1);
+                kd = received_chars.toFloat();
+                break;
+            case 's':
+                received_chars.remove(0, 1);
+                anglex_setpoint = received_chars.toFloat();
+            default:
+                break;
+            }
+            received_chars = "";
+        }
+    }
     Serial.print(micros() / 1000);
     Serial.print("\tP: ");
     Serial.print(CtrlPWM);
