@@ -29,7 +29,7 @@ double accx, accy, accz;       // x, y, z linear acceleration
 
 void Init_MPU()
 {
-    Wire.begin(4, 16);       // Wire.begin(I2C_SDA, I2C_SCL);
+    Wire.begin(21, 22);      // Wire.begin(I2C_SDA, I2C_SCL);
     Wire.setClock(400000);   // Set the SCL clock to 400KHz
     accelgyro.initialize();  // Initialize the accelgyro
     mpu.initialize();        // Initialize the MPU

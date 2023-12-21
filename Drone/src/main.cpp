@@ -69,15 +69,15 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    Get_MPUangle(); // Get the angle from the IMU sensor
-    // Compute_PID();     // Compute the PID output (motor_cmd)
-    // Run_Motor();       // Send the PID output (motor_cmd) to the motor
+    Get_MPUangle();    // Get the angle from the IMU sensor
+    Compute_PID();     // Compute the PID output (motor_cmd)
+    Run_Motor();       // Send the PID output (motor_cmd) to the motor
     SerialDataPrint(); // Print the data on the serial monitor for debugging
     SerialDataWrite(); // User data to tune the PID parameters
 
     if (micros() - time_prev_serial >= 20000)
     {
-        time_prev_serial = micros();
+        // time_prev_serial = micros();
         SerialDataWrite();
     }
 }
@@ -90,23 +90,26 @@ void SerialDataPrint()
     if (micros() - time_prev >= 50000)
     {
         time_prev = micros();
-        Serial.print(millis());
+        // Serial.print(millis());
         Serial.print("\t");
-        Serial.print(anglex);
+        Serial.print(anglex, 3);
         Serial.print("\t");
-        Serial.print(angley);
+        Serial.print(angley, 3);
         Serial.print("\t");
-        Serial.print(anglez);
+        Serial.print(anglez, 3);
         Serial.print("\t");
-        Serial.print(kp);
+        // Serial.print(kp);
+        // Serial.print("\t");
+        // Serial.print(ki);
+        // Serial.print("\t");
+        // Serial.print(kd);
+        // Serial.print("\t");
+        Serial.print(pid_output_roll, 3);
         Serial.print("\t");
-        Serial.print(ki);
+        Serial.print(pid_output_pitch, 3);
         Serial.print("\t");
-        Serial.print(kd);
+        Serial.print(pid_output_yaw, 3);
         Serial.print("\t");
-        Serial.print(anglex_setpoint);
-        Serial.print(angley_setpoint);
-        Serial.print(anglez_setpoint);
 
         Serial.println();
     }
@@ -151,18 +154,18 @@ void SerialDataWrite()
             received_chars = "";
         }
     }
-    Serial.print(micros() / 1000);
-    Serial.print("\tP: ");
-    Serial.print(CtrlPWM);
-    Serial.print("\tJX: ");
-    Serial.print(JoyVrx);
-    Serial.print("\tJY: ");
-    Serial.print(JoyVry);
-    Serial.print("\tB1: ");
-    Serial.print(Button1State);
-    Serial.print("\tB2: ");
-    Serial.print(Button2State);
-    Serial.println();
+    // Serial.print(micros() / 1000);
+    // Serial.print("\tP: ");
+    // Serial.print(CtrlPWM);
+    // Serial.print("\tJX: ");
+    // Serial.print(JoyVrx);
+    // Serial.print("\tJY: ");
+    // Serial.print(JoyVry);
+    // Serial.print("\tB1: ");
+    // Serial.print(Button1State);
+    // Serial.print("\tB2: ");
+    // Serial.print(Button2State);
+    // Serial.println();
 }
 
 // ******************************************
@@ -170,7 +173,7 @@ void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
     // debugging serial
     Serial.print(micros() / 1000);
-    Serial.println("\tData received!");
+    // Serial.println("\tData received!");
     // You must copy the incoming data to the local variables
     memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
 }
