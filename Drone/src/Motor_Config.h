@@ -9,6 +9,8 @@
 #define MAX_SIGNAL 2000 // Parameter required for ESC definition
 #define MIN_SIGNAL 1000 // Parameter required for the ESC definition
 
+extern int CtrlPWM;
+
 Servo ESC_Left1;  // Define ESC
 Servo ESC_Left2;  // Define ESC
 Servo ESC_Right1; // Define ESC
@@ -39,5 +41,13 @@ void Run_Motor_Right1()
 
 void Run_Motor_Right2()
 {
+    ESC_Right2.write(CtrlPWM); // Send the command to the ESC
+}
+
+void Run_Motor()
+{
+    ESC_Left2.write(CtrlPWM);  // Send the command to the ESC
+    ESC_Left1.write(CtrlPWM);  // Send the command to the ESC
+    ESC_Right1.write(CtrlPWM); // Send the command to the ESC
     ESC_Right2.write(CtrlPWM); // Send the command to the ESC
 }

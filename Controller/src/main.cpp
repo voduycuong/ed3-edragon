@@ -25,23 +25,23 @@ typedef struct struct_msg_Sent
 } struct_msg_Sent;
 
 // Define the incoming data
-typedef struct struct_msg_Receive
-{
-    int Receive_GPS_val; // replace with TinyGPSPlus object later
-    float Receive_AngleX;
-    float Receive_AngleY;
-    float Receive_AngleZ;
-    float Receive_GyroX;
-    float Receive_GyroY;
-    float Receive_GyroZ;
-    float Receive_AccX;
-    float Receive_AccY;
-    float Receive_AccZ;
-} struct_msg_Receive;
+// typedef struct struct_msg_Receive
+// {
+//     int Receive_GPS_val; // replace with TinyGPSPlus object later
+//     float Receive_AngleX;
+//     float Receive_AngleY;
+//     float Receive_AngleZ;
+//     float Receive_GyroX;
+//     float Receive_GyroY;
+//     float Receive_GyroZ;
+//     float Receive_AccX;
+//     float Receive_AccY;
+//     float Receive_AccZ;
+// } struct_msg_Receive;
 
 // Declare the structure
 struct_msg_Sent Sent_Data;
-struct_msg_Receive Receive_Data;
+// struct_msg_Receive Receive_Data;
 
 // Variable for espnow communication
 esp_now_peer_info_t peerInfo;
@@ -108,16 +108,16 @@ void setup()
 // ================================================================
 void loop()
 {
-    GpsVal = Receive_Data.Receive_GPS_val;
-    AngleX = Receive_Data.Receive_AngleX;
-    AngleY = Receive_Data.Receive_AngleY;
-    AngleZ = Receive_Data.Receive_AngleZ;
-    GyroX = Receive_Data.Receive_GyroX;
-    GyroY = Receive_Data.Receive_GyroY;
-    GyroZ = Receive_Data.Receive_GyroZ;
-    AccX = Receive_Data.Receive_AccX;
-    AccY = Receive_Data.Receive_AccY;
-    AccZ = Receive_Data.Receive_AccZ;
+    // GpsVal = Receive_Data.Receive_GPS_val;
+    // AngleX = Receive_Data.Receive_AngleX;
+    // AngleY = Receive_Data.Receive_AngleY;
+    // AngleZ = Receive_Data.Receive_AngleZ;
+    // GyroX = Receive_Data.Receive_GyroX;
+    // GyroY = Receive_Data.Receive_GyroY;
+    // GyroZ = Receive_Data.Receive_GyroZ;
+    // AccX = Receive_Data.Receive_AccX;
+    // AccY = Receive_Data.Receive_AccY;
+    // AccZ = Receive_Data.Receive_AccZ;
 
     CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180); // Read the pot, map the reading from [0, 4095] to [0, 180]
 
@@ -160,6 +160,8 @@ void loop()
     if (millis() - time_prev >= 20000)
     {
         // time_prev = millis();
+
+        // Receiving
         time_prev = micros();
         Serial.print(millis());
         Serial.print("\tGPS: ");
@@ -183,16 +185,18 @@ void loop()
         Serial.print("\tAccZ: ");
         Serial.print(AccZ);
         Serial.println();
-        // Serial.print(CtrlPWM);
-        // Serial.print("\tJX: ");
-        // Serial.print(JoyVrx);
-        // Serial.print("\tJY: ");
-        // Serial.print(JoyVry);
-        // Serial.print("\tB1: ");
-        // Serial.print(Button1State);
-        // Serial.print("\tB2: ");
-        // Serial.print(Button2State);
-        // Serial.println();
+        //______________________
+
+        Serial.print(CtrlPWM);
+        Serial.print("\tJX: ");
+        Serial.print(JoyVrx);
+        Serial.print("\tJY: ");
+        Serial.print(JoyVry);
+        Serial.print("\tB1: ");
+        Serial.print(Button1State);
+        Serial.print("\tB2: ");
+        Serial.print(Button2State);
+        Serial.println();
     }
 }
 
@@ -244,14 +248,14 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
     // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
-void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
-{
-    // debugging serial
-    // Serial.print(micros() / 1000);
-    // Serial.println("\tData received!");
-    // You must copy the incoming data to the local variables
-    memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
-}
+// void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
+// {
+//     // debugging serial
+//     // Serial.print(micros() / 1000);
+//     // Serial.println("\tData received!");
+//     // You must copy the incoming data to the local variables
+//     memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
+// }
 
 // ******************************************
 void espnow_initialize()

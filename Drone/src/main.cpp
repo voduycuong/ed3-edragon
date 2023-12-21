@@ -39,10 +39,9 @@ bool Button2State = false; // 0 - unpressed. 1 - pressed
 // Function Declaration
 // ================================================================
 // These function are kept in the main.cpp because it is easier to modify
-void SerialDataPrint();  // Data from the microcontroller to the PC
-void SerialDataWrite();  // Data from the PC to the microcontroller
-void WaitForKeyStroke(); // Function to interact with the serial monitor
-void Init_Serial();      // Function to init the serial monitor
+void SerialDataPrint(); // Data from the microcontroller to the PC
+void SerialDataWrite(); // Data from the PC to the microcontroller
+void Init_Serial();     // Function to init the serial monitor
 void Init_ESC();
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 float floatMap(float, float, float, float, float);
@@ -53,29 +52,28 @@ void espnow_initialize();
 // ================================================================
 void setup()
 {
-    Init_Serial();   // Initialize Serial Communication
-    Init_MPU();      // Initialize MPU
-    Init_MotorPin(); // Initialize Motors
-    Init_PID();      // Initialize PID
-    Init_ESC();      // Initializa ESC
     espnow_initialize();
+    Init_Serial(); // Initialize Serial Communication
+    // Init_MPU();    // Initialize MPU
+    // Init_PID();    // Initialize PID
+    Init_ESC(); // Initializa ESC
 }
 // ================================================================
 // Loop function
 // ================================================================
 void loop()
 {
-    Get_MPUangle();    // Get the angle from the IMU sensor
-    Compute_PID();     // Compute the PID output (motor_cmd)
-    Run_Motor();       // Send the PID output (motor_cmd) to the motor
-    SerialDataPrint(); // Print the data on the serial monitor for debugging
-    SerialDataWrite(); // User data to tune the PID parameters
-
     CtrlPWM = Receive_Data.Receive_PotValue;
     JoyVrx = Receive_Data.Receive_JoyVrx;
     JoyVry = Receive_Data.Receive_JoyVry;
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
+
+    // Get_MPUangle(); // Get the angle from the IMU sensor
+    // Compute_PID();  // Compute the PID output (motor_cmd)
+    Run_Motor(); // Send the PID output (motor_cmd) to the motor
+    // SerialDataPrint(); // Print the data on the serial monitor for debugging
+    SerialDataWrite(); // User data to tune the PID parameters
 
     if (micros() - time_prev_serial >= 20000)
     {
@@ -89,25 +87,25 @@ void loop()
 // ================================================================
 void SerialDataPrint()
 {
-    // if (micros() - time_prev >= 50000)
-    // {
-    //   time_prev = micros();
-    //   Serial.print(millis());
-    //   Serial.print("\t");
-    //   Serial.print(anglex);
-    //   Serial.print("\t");
-    //   Serial.print(motor_cmd);
-    //   Serial.print("\t");
-    //   Serial.print(kp);
-    //   Serial.print("\t");
-    //   Serial.print(ki);
-    //   Serial.print("\t");
-    //   Serial.print(kd);
-    //   Serial.print("\t");
-    //   Serial.print(anglex_setpoint);
+    if (micros() - time_prev >= 50000)
+    {
+        time_prev = micros();
+        Serial.print(millis());
+        Serial.print("\t");
+        Serial.print(anglex);
+        Serial.print("\t");
+        Serial.print(motor_cmd);
+        Serial.print("\t");
+        Serial.print(kp);
+        Serial.print("\t");
+        Serial.print(ki);
+        Serial.print("\t");
+        Serial.print(kd);
+        Serial.print("\t");
+        Serial.print(anglex_setpoint);
 
-    //   Serial.println();
-    // }
+        Serial.println();
+    }
 }
 
 // ================================================================
@@ -167,8 +165,8 @@ void SerialDataWrite()
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
     // debugging serial
-    // Serial.print(micros() / 1000);
-    // Serial.println("\tData received!");
+    Serial.print(micros() / 1000);
+    Serial.println("\tData received!");
     // You must copy the incoming data to the local variables
     memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
 }

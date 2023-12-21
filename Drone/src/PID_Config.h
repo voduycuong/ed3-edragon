@@ -26,7 +26,7 @@ PID myPID(&anglex, &pid_output, &anglex_setpoint, kp, ki, kd, DIRECT);
 // Function Declaration
 // ================================================================
 void Init_PID();
-void PID_Compute();
+void Compute_PID();
 
 // ================================================================
 // Function Definition
@@ -38,7 +38,7 @@ void Init_PID()
     myPID.SetSampleTime(10);
 }
 // ================================================================
-void PID_Compute()
+void Compute_PID()
 {
     myPID.SetTunings(kp, ki, kd);
     myPID.Compute();
