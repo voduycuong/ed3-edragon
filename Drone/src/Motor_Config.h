@@ -24,30 +24,11 @@ void Init_ESC()
     ESC_4.attach(MOTOR_4_PIN, MIN_SIGNAL, MAX_SIGNAL);
 }
 
-void Run_Motor_1()
-{
-    ESC_1.write(CtrlPWM); // Send the command to the ESC
-}
-
-void Run_Motor_2()
-{
-    ESC_2.write(CtrlPWM); // Send the command to the ESC
-}
-
-void Run_Motor_3()
-{
-    ESC_3.write(CtrlPWM); // Send the command to the ESC
-}
-
-void Run_Motor_4()
-{
-    ESC_4.write(CtrlPWM); // Send the command to the ESC
-}
-
 void Run_Motor()
 {
-    ESC_1.write(CtrlPWM); // Send the command to the ESC
-    ESC_2.write(CtrlPWM); // Send the command to the ESC
-    ESC_3.write(CtrlPWM); // Send the command to the ESC
-    ESC_4.write(CtrlPWM); // Send the command to the ESC
+    // Send command to ESCs
+    ESC_1.write(CtrlPWM + pid_output_x + pid_output_y - pid_output_z);
+    ESC_2.write(CtrlPWM + pid_output_x - pid_output_y + pid_output_z);
+    ESC_3.write(CtrlPWM - pid_output_x + pid_output_y - pid_output_z);
+    ESC_4.write(CtrlPWM - pid_output_x - pid_output_y + pid_output_z);
 }
