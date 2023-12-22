@@ -2,6 +2,7 @@
 #include <ESP32Servo.h>
 #include <esp_now.h>
 #include <WiFi.h>
+#include <string.h>
 
 #include "IMU_Config.h"    // Personal library to configure the MPU6050
 #include "Serial_Config.h" // Personal library to configure the serial communication
@@ -45,14 +46,14 @@ void Init_Serial();     // Function to init the serial monitor
 void Init_ESC();
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 float floatMap(float, float, float, float, float);
-void espnow_initialize();
+void Init_ESPNOW();
 
 // ================================================================
 // Setup function
 // ================================================================
 void setup()
 {
-    espnow_initialize();
+    Init_ESPNOW();
     Init_Serial(); // Initialize Serial Communication
     Init_MPU();    // Initialize MPU
     Init_PID();    // Initialize PID
@@ -77,7 +78,7 @@ void loop()
 
     if (micros() - time_prev_serial >= 20000)
     {
-        // time_prev_serial = micros();
+        time_prev_serial = micros();
         SerialDataWrite();
     }
 }
@@ -90,7 +91,7 @@ void SerialDataPrint()
     if (micros() - time_prev >= 50000)
     {
         time_prev = micros();
-        // Serial.print(millis());
+        Serial.print(millis());
         Serial.print("\t");
         Serial.print(anglex, 3);
         Serial.print("\t");
@@ -104,11 +105,11 @@ void SerialDataPrint()
         // Serial.print("\t");
         // Serial.print(kd);
         // Serial.print("\t");
-        Serial.print(pid_output_roll, 3);
+        Serial.print(pid_output_x, 3);
         Serial.print("\t");
-        Serial.print(pid_output_pitch, 3);
+        Serial.print(pid_output_y, 3);
         Serial.print("\t");
-        Serial.print(pid_output_yaw, 3);
+        Serial.print(pid_output_z, 3);
         Serial.print("\t");
 
         Serial.println();
@@ -117,41 +118,127 @@ void SerialDataPrint()
 
 // ================================================================
 // Function to tune the PID parameters. For example:
-// To change the P value to 10, type p10
-// To change the I value to -5, type i-5
-// To change the D value to 2.4, type d2.4
-// To change the setpoint to 3, type s3
+// To change the kp_anglex value to 10, type pax10
+// To change the ki_anglex value to -5, type iax-5
+// To change the kd_anglex value to 2.4, type dax2.4
+
+// To change the kp_angley value to 10, type pay10
+// To change the ki_angley value to -5, type iay-5
+// To change the kd_angley value to 2.4, type day2.4
+
+// To change the kp_anglez value to 10, type paz10
+// To change the ki_anglez value to -5, type iaz-5
+// To change the kd_anglez value to 2.4, type daz2.4
+
+// To change the kp_gyrox value to 10, type pgx10
+// To change the ki_gyrox value to -5, type igx-5
+// To change the kd_gyrox value to 2.4, type dgx2.4
+
+// To change the kp_gyroy value to 10, type pgy10
+// To change the ki_gyroy value to -5, type igy-5
+// To change the kd_gyroy value to 2.4, type dgy2.4
+
+// To change the kp_gyroz value to 10, type pgz10
+// To change the ki_gyroz value to -5, type igz-5
+// To change the kd_gyroz value to 2.4, type dgz2.4
+
+// To change the anglex_setpoint to 3, type axs3
+// To change the angley_setpoint to 3, type ays3
+// To change the anglez_setpoint to 3, type azs3
+
+// To change the gyrox_setpoint to 3, type gxs3
+// To change the gyroy_setpoint to 3, type gys3
+// To change the gyroz_setpoint to 3, type gzs3
 
 void SerialDataWrite()
 {
-    static String received_chars;
+    static String modification;
+    static String value;
+    static String option;
+
     while (Serial.available())
     {
+        // Read from serial monitor
         char inChar = (char)Serial.read();
-        received_chars += inChar;
+        modification += inChar;
+
+        // Option extraction
+        option = modification;
+        option.remove(3, modification.length() - 3);
+
+        // Value extraction
+        value = modification;
+        value.remove(0, 3);
+
+        // Enter char received
         if (inChar == '\n')
         {
-            switch (received_chars[0])
-            {
-            case 'p':
-                received_chars.remove(0, 1);
-                kp = received_chars.toFloat();
-                break;
-            case 'i':
-                received_chars.remove(0, 1);
-                ki = received_chars.toFloat();
-                break;
-            case 'd':
-                received_chars.remove(0, 1);
-                kd = received_chars.toFloat();
-                break;
-            case 's':
-                received_chars.remove(0, 1);
-                anglex_setpoint = received_chars.toFloat();
-            default:
-                break;
-            }
-            received_chars = "";
+            // P adjustment for accelerate
+            if (option.equals("pax"))
+                kp_anglex = value.toFloat();
+            if (option.equals("pay"))
+                kp_angley = value.toFloat();
+            if (option.equals("paz"))
+                kp_anglez = value.toFloat();
+
+            // I adjustment for accelerate
+            if (option.equals("iax"))
+                ki_anglex = value.toFloat();
+            if (option.equals("iay"))
+                ki_angley = value.toFloat();
+            if (option.equals("iaz"))
+                ki_anglez = value.toFloat();
+
+            // D adjustment for accelerate
+            if (option.equals("dax"))
+                kd_anglex = value.toFloat();
+            if (option.equals("day"))
+                kd_angley = value.toFloat();
+            if (option.equals("daz"))
+                kd_anglez = value.toFloat();
+
+            // P adjustment for gyro
+            if (option.equals("pgx"))
+                kp_gyrox = value.toFloat();
+            if (option.equals("pgy"))
+                kp_gyroy = value.toFloat();
+            if (option.equals("pgz"))
+                kp_gyroz = value.toFloat();
+
+            // I adjustment for gyro
+            if (option.equals("igx"))
+                ki_gyrox = value.toFloat();
+            if (option.equals("igy"))
+                ki_gyroy = value.toFloat();
+            if (option.equals("igz"))
+                ki_gyroz = value.toFloat();
+
+            // D adjustment for gyro
+            if (option.equals("dgx"))
+                kd_gyrox = value.toFloat();
+            if (option.equals("dgy"))
+                kd_gyroy = value.toFloat();
+            if (option.equals("dgz"))
+                kd_gyroz = value.toFloat();
+
+            // Setpoint adjustment for accelerate
+            if (option.equals("axs"))
+                kd_gyrox = value.toFloat();
+            if (option.equals("ays"))
+                kd_gyroy = value.toFloat();
+            if (option.equals("azs"))
+                kd_gyroz = value.toFloat();
+
+            // Setpoint adjustment for gyro
+            if (option.equals("gxs"))
+                kd_gyrox = value.toFloat();
+            if (option.equals("gys"))
+                kd_gyroy = value.toFloat();
+            if (option.equals("gzs"))
+                kd_gyroz = value.toFloat();
+
+            // Clear input modification
+            modification = "";
         }
     }
     // Serial.print(micros() / 1000);
@@ -185,7 +272,7 @@ float floatMap(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 // ******************************************
-void espnow_initialize()
+void Init_ESPNOW()
 {
     WiFi.mode(WIFI_STA);
     if (esp_now_init() != ESP_OK)

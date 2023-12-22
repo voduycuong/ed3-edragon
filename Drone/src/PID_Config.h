@@ -5,10 +5,10 @@ extern double anglex;
 extern double angley;
 extern double anglez;
 
-// prof.
 extern double gyrox;
 extern double gyroy;
 extern double gyroz;
+
 // ================================================================
 // Variable declaration
 // ================================================================
@@ -127,5 +127,7 @@ void Compute_PID()
         pid_output_y = 0; // motor stop when fall
         pid_output_z = 0; // motor stop when fall
     }
+
+    motor_1_cmd;
 }
 // ================================================================
