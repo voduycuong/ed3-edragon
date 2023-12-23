@@ -28,7 +28,7 @@ void Run_Motor()
 {
     // Send command to ESCs
     ESC_1.write(CtrlPWM + pid_output_x + pid_output_y - pid_output_z);
-    ESC_2.write(CtrlPWM + pid_output_x - pid_output_y + pid_output_z);
-    ESC_3.write(CtrlPWM - pid_output_x + pid_output_y - pid_output_z);
-    ESC_4.write(CtrlPWM - pid_output_x - pid_output_y + pid_output_z);
+    ESC_2.write(CtrlPWM - pid_output_x + pid_output_y + pid_output_z);
+    ESC_3.write(CtrlPWM - pid_output_x - pid_output_y - pid_output_z);
+    ESC_4.write(CtrlPWM + pid_output_x - pid_output_y + pid_output_z);
 }
