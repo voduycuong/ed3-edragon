@@ -70,9 +70,12 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    Get_MPUangle();    // Get the angle from the IMU sensor
-    Compute_PID();     // Compute the PID output (motor_cmd)
-    Run_Motor();       // Send the PID output (motor_cmd) to the motor
+    Get_MPUangle(); // Get the angle from the IMU sensor
+    Compute_PID();  // Compute the PID output (motor_cmd)
+
+    if (CtrlPWM > 20) // Set threshold for thrust
+        Run_Motor();  // Send the PID output (motor_cmd) to the motor
+
     SerialDataPrint(); // Print the data on the serial monitor for debugging
     SerialDataWrite(); // User data to tune the PID parameters
 
