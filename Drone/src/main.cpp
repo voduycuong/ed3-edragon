@@ -70,14 +70,16 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    Run_Motor();  // Send the PID output (motor_cmd) to the motor
+    Run_Motor(); // Send the PID output (motor_cmd) to the motor
 
     if (CtrlPWM > 0) // Set threshold for thrust
+    {
         Get_MPUangle(); // Get the angle from the IMU sensor
         Compute_PID();  // Compute the PID output (motor_cmd)
-        
+    }
+
     SerialDataPrint(); // Print the data on the serial monitor for debugging
-    SerialDataWrite(); // User data to tune the PID parameters
+    // SerialDataWrite(); // User data to tune the PID parameters
 
     if (micros() - time_prev_serial >= 20000)
     {
@@ -94,28 +96,63 @@ void SerialDataPrint()
     if (micros() - time_prev >= 50000)
     {
         time_prev = micros();
-        Serial.print(millis());
-        Serial.print("\t");
-        Serial.print(anglex, 3);
-        Serial.print("\t");
-        Serial.print(angley, 3);
-        Serial.print("\t");
-        Serial.print(anglez, 3);
-        Serial.print("\t");
-        // Serial.print(kp);
+        // Serial.print(millis());
         // Serial.print("\t");
-        // Serial.print(ki);
+        // Serial.print(anglex, 3);
         // Serial.print("\t");
-        // Serial.print(kd);
+        // Serial.print(angley, 3);
         // Serial.print("\t");
-        Serial.print(pid_output_x, 3);
+        // Serial.print(anglez, 3);
+        // Serial.print("\t");
+        // Serial.print(gyrox);
+        // Serial.print("\t");
+        // Serial.print(gyroy);
+        // Serial.print("\t");
+        // Serial.print(gyroz);
+        // Serial.print("\t");
+
+        Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
+
+        Serial.print(kp_anglex, 3);
         Serial.print("\t");
-        Serial.print(pid_output_y, 3);
+        Serial.print(ki_anglex, 3);
         Serial.print("\t");
-        Serial.print(pid_output_z, 3);
+        Serial.print(kd_anglex, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_angley, 3);
         Serial.print("\t");
+        Serial.print(ki_angley, 3);
+        Serial.print("\t");
+        Serial.print(kd_angley, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_anglez, 3);
+        Serial.print("\t");
+        Serial.print(ki_anglez, 3);
+        Serial.print("\t");
+        Serial.print(kd_anglez, 3);
+
+        Serial.print("\n");
+
+        Serial.print(kp_gyrox, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyrox, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyrox, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_gyroy, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyroy, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyroy, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_gyroz, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyroz, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyroz, 3);
 
         Serial.println();
+        delay(1000);
     }
 }
 
@@ -155,27 +192,35 @@ void SerialDataPrint()
 
 void SerialDataWrite()
 {
-    static String modification;
-    static String value;
-    static String option;
-
+    static String modification = "";
+    static String value = "";
+    static String option = "";
     while (Serial.available())
     {
+
         // Read from serial monitor
         char inChar = (char)Serial.read();
         modification += inChar;
 
-        // Option extraction
-        option = modification;
-        option.remove(3, modification.length() - 3);
-
-        // Value extraction
-        value = modification;
-        value.remove(0, 3);
-
         // Enter char received
         if (inChar == '\n')
         {
+            // Option extraction
+            option = modification;
+            option.remove(3, modification.length() - 3);
+
+            // Value extraction
+            value = modification;
+            value.remove(0, 3);
+
+            Serial.print("value = ");
+            Serial.print(value);
+            Serial.print("\n");
+
+            Serial.print("option = ");
+            Serial.print(option);
+            Serial.print("\n");
+
             // P adjustment for accelerate
             if (option.equals("pax"))
                 kp_anglex = value.toFloat();
@@ -239,23 +284,12 @@ void SerialDataWrite()
                 kd_gyroy = value.toFloat();
             if (option.equals("gzs"))
                 kd_gyroz = value.toFloat();
-
-            // Clear input modification
-            modification = "";
         }
+        // Clear input modification
+        modification = "";
+        value = "";
+        option = "";
     }
-    // Serial.print(micros() / 1000);
-    // Serial.print("\tP: ");
-    // Serial.print(CtrlPWM);
-    // Serial.print("\tJX: ");
-    // Serial.print(JoyVrx);
-    // Serial.print("\tJY: ");
-    // Serial.print(JoyVry);
-    // Serial.print("\tB1: ");
-    // Serial.print(Button1State);
-    // Serial.print("\tB2: ");
-    // Serial.print(Button2State);
-    // Serial.println();
 }
 
 // ******************************************
