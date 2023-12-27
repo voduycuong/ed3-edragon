@@ -23,30 +23,30 @@ double pid_output_y = 0;
 double pid_output_z = 0;
 
 // Init gain of accelerate
-double kp_anglex = 1.0;
+double kp_anglex = 2;
 double ki_anglex = 0.0;
-double kd_anglex = 0.0;
+double kd_anglex = 0.1;
 
-double kp_angley = 1.0;
+double kp_angley = 2;
 double ki_angley = 0.0;
-double kd_angley = 0.0;
+double kd_angley = 0.1;
 
-double kp_anglez = 1.0;
+double kp_anglez = 2;
 double ki_anglez = 0.0;
-double kd_anglez = 0.0;
+double kd_anglez = 0.1;
 
 // Init gain of accelerate
-double kp_gyrox = 1.0;
+double kp_gyrox = 2;
 double ki_gyrox = 0.0;
-double kd_gyrox = 0.0;
+double kd_gyrox = 0.1;
 
-double kp_gyroy = 1.0;
+double kp_gyroy = 2;
 double ki_gyroy = 0.0;
-double kd_gyroy = 0.0;
+double kd_gyroy = 0.1;
 
-double kp_gyroz = 1.0;
+double kp_gyroz = 2;
 double ki_gyroz = 0.0;
-double kd_gyroz = 0.0;
+double kd_gyroz = 0.1;
 
 // From the remote controller
 double anglex_setpoint = 0;
