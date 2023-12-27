@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
-#define MOTOR_1_PIN 32 // Pin 32 attached to ESC signal pin (Rear Right)
-#define MOTOR_2_PIN 33 // Pin 33 attached to ESC signal pin (Front Right)
-#define MOTOR_3_PIN 18 // Pin 18 attached to ESC signal pin (Rear Left)
-#define MOTOR_4_PIN 19 // Pin 19 attached to ESC signal pin (Front Left)
+#define MOTOR_1_PIN 18 // Pin 32 attached to ESC signal pin (Rear Right)
+#define MOTOR_2_PIN 19 // Pin 33 attached to ESC signal pin (Front Right)
+#define MOTOR_3_PIN 32 // Pin 18 attached to ESC signal pin (Rear Left)
+#define MOTOR_4_PIN 33 // Pin 19 attached to ESC signal pin (Front Left)
 
 #define MAX_SIGNAL 2000 // Parameter required for ESC definition
 #define MIN_SIGNAL 1000 // Parameter required for the ESC definition
@@ -30,8 +30,13 @@ void Init_ESC()
 void Run_Motor()
 {
     // Send command to ESCs
-    ESC_1.write(CtrlPWM - pid_output_x - pid_output_y + pid_output_z);
-    ESC_2.write(CtrlPWM - pid_output_x + pid_output_y - pid_output_z);
-    ESC_3.write(CtrlPWM + pid_output_x - pid_output_y - pid_output_z);
-    ESC_4.write(CtrlPWM + pid_output_x + pid_output_y + pid_output_z);
+    // ESC_1.write(CtrlPWM + pid_output_x - pid_output_y + pid_output_z); // RR
+    // ESC_2.write(CtrlPWM + pid_output_x + pid_output_y - pid_output_z); // FR
+    // ESC_3.write(CtrlPWM - pid_output_x - pid_output_y - pid_output_z); // RL
+    // ESC_4.write(CtrlPWM - pid_output_x + pid_output_y + pid_output_z); // FL
+
+    ESC_1.write(CtrlPWM - pid_output_x + pid_output_y); // FL
+    ESC_2.write(CtrlPWM - pid_output_x - pid_output_y); // RL
+    ESC_3.write(CtrlPWM + pid_output_x + pid_output_y); // FR
+    ESC_4.write(CtrlPWM + pid_output_x - pid_output_y); // RR
 }
