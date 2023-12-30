@@ -197,94 +197,81 @@ void SerialDataWrite()
     static String option = "";
     while (Serial.available())
     {
-
         // Read from serial monitor
         char inChar = (char)Serial.read();
         modification += inChar;
+        option = modification;
+        value = modification;
 
-        // Enter char received
-        if (inChar == '\n')
-        {
-            // Option extraction
-            option = modification;
-            option.remove(3, modification.length() - 3);
+        // Option extraction
+        option.remove(3, modification.length() - 3);
+        // Value extraction
+        value.remove(0, 3);
 
-            // Value extraction
-            value = modification;
-            value.remove(0, 3);
+        // P adjustment for angle
+        if (option.equals("pax"))
+            kp_anglex = value.toFloat();
+        if (option.equals("pay"))
+            kp_angley = value.toFloat();
+        if (option.equals("paz"))
+            kp_anglez = value.toFloat();
 
-            Serial.print("value = ");
-            Serial.print(value);
-            Serial.print("\n");
+        // I adjustment for angle
+        if (option.equals("iax"))
+            ki_anglex = value.toFloat();
+        if (option.equals("iay"))
+            ki_angley = value.toFloat();
+        if (option.equals("iaz"))
+            ki_anglez = value.toFloat();
 
-            Serial.print("option = ");
-            Serial.print(option);
-            Serial.print("\n");
+        // D adjustment for angle
+        if (option.equals("dax"))
+            kd_anglex = value.toFloat();
+        if (option.equals("day"))
+            kd_angley = value.toFloat();
+        if (option.equals("daz"))
+            kd_anglez = value.toFloat();
 
-            // P adjustment for accelerate
-            if (option.equals("pax"))
-                kp_anglex = value.toFloat();
-            if (option.equals("pay"))
-                kp_angley = value.toFloat();
-            if (option.equals("paz"))
-                kp_anglez = value.toFloat();
+        // P adjustment for gyro
+        if (option.equals("pgx"))
+            kp_gyrox = value.toFloat();
+        if (option.equals("pgy"))
+            kp_gyroy = value.toFloat();
+        if (option.equals("pgz"))
+            kp_gyroz = value.toFloat();
 
-            // I adjustment for accelerate
-            if (option.equals("iax"))
-                ki_anglex = value.toFloat();
-            if (option.equals("iay"))
-                ki_angley = value.toFloat();
-            if (option.equals("iaz"))
-                ki_anglez = value.toFloat();
+        // I adjustment for gyro
+        if (option.equals("igx"))
+            ki_gyrox = value.toFloat();
+        if (option.equals("igy"))
+            ki_gyroy = value.toFloat();
+        if (option.equals("igz"))
+            ki_gyroz = value.toFloat();
 
-            // D adjustment for accelerate
-            if (option.equals("dax"))
-                kd_anglex = value.toFloat();
-            if (option.equals("day"))
-                kd_angley = value.toFloat();
-            if (option.equals("daz"))
-                kd_anglez = value.toFloat();
+        // D adjustment for gyro
+        if (option.equals("dgx"))
+            kd_gyrox = value.toFloat();
+        if (option.equals("dgy"))
+            kd_gyroy = value.toFloat();
+        if (option.equals("dgz"))
+            kd_gyroz = value.toFloat();
 
-            // P adjustment for gyro
-            if (option.equals("pgx"))
-                kp_gyrox = value.toFloat();
-            if (option.equals("pgy"))
-                kp_gyroy = value.toFloat();
-            if (option.equals("pgz"))
-                kp_gyroz = value.toFloat();
+        // Setpoint adjustment for angle
+        if (option.equals("axs"))
+            anglex_setpoint = value.toFloat();
+        if (option.equals("ays"))
+            angley_setpoint = value.toFloat();
+        if (option.equals("azs"))
+            anglez_setpoint = value.toFloat();
 
-            // I adjustment for gyro
-            if (option.equals("igx"))
-                ki_gyrox = value.toFloat();
-            if (option.equals("igy"))
-                ki_gyroy = value.toFloat();
-            if (option.equals("igz"))
-                ki_gyroz = value.toFloat();
+        // Setpoint adjustment for gyro
+        if (option.equals("gxs"))
+            gyrox_setpoint = value.toFloat();
+        if (option.equals("gys"))
+            gyroy_setpoint = value.toFloat();
+        if (option.equals("gzs"))
+            gyroz_setpoint = value.toFloat();
 
-            // D adjustment for gyro
-            if (option.equals("dgx"))
-                kd_gyrox = value.toFloat();
-            if (option.equals("dgy"))
-                kd_gyroy = value.toFloat();
-            if (option.equals("dgz"))
-                kd_gyroz = value.toFloat();
-
-            // Setpoint adjustment for accelerate
-            if (option.equals("axs"))
-                kd_gyrox = value.toFloat();
-            if (option.equals("ays"))
-                kd_gyroy = value.toFloat();
-            if (option.equals("azs"))
-                kd_gyroz = value.toFloat();
-
-            // Setpoint adjustment for gyro
-            if (option.equals("gxs"))
-                kd_gyrox = value.toFloat();
-            if (option.equals("gys"))
-                kd_gyroy = value.toFloat();
-            if (option.equals("gzs"))
-                kd_gyroz = value.toFloat();
-        }
         // Clear input modification
         modification = "";
         value = "";
