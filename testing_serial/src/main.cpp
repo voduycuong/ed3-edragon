@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+double kp_anglex = 5.00;
+
 void setup()
 {
     Serial.begin(115200);
@@ -18,20 +20,34 @@ void loop()
         char inChar = (char)Serial.read();
         modification += inChar;
 
-        // Enter char received
-        if (inChar == '\n')
-        {
-            // Option extraction
-            option = modification;
-            option.remove(3, modification.length() - 3);
-        }
+        option = modification;
+        value = modification;
+
+        // Option extraction
+        option.remove(3, modification.length() - 3);
+        // Value extraction
+        value.remove(0, 3);
+
+        // P adjustment for accelerate
+        if (option.equals("pax"))
+            kp_anglex = value.toFloat();
     }
 
-    Serial.println("Mod: ");
-    Serial.println(modification);
-    Serial.println("Value: ");
-    Serial.println(value);
-    Serial.println("Option: ");
-    Serial.println(option);
-    delay(1000);
+    Serial.println();
+    Serial.print("Mod: ");
+    Serial.print(modification);
+    Serial.print("\t\tValue: ");
+    Serial.print(value);
+    Serial.print("\t\tOption: ");
+    Serial.print(option);
+
+    Serial.println();
+    Serial.print("kp_anglex: ");
+    Serial.print(kp_anglex);
+
+    delay(500);
+
+    modification = "";
+    value = "";
+    option = "";
 }
