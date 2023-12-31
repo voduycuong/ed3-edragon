@@ -89,33 +89,51 @@ void loop()
 // ================================================================
 // Function Definition
 // ================================================================
+// VARIABLES TO SEND
+FLOATUNION_t send_anglex;
+FLOATUNION_t send_angley;
+FLOATUNION_t send_anglez;
+
 void SerialDataPrint()
 {
+    send_anglex.number = anglex;
+    send_angley.number = angley;
+    send_anglez.number = anglez;
+
     if (micros() - time_prev >= 50000)
     {
         time_prev = micros();
-        Serial.print(millis());
-        Serial.print("\t");
-        Serial.print(anglex, 3);
-        Serial.print("\t");
-        Serial.print(angley, 3);
-        Serial.print("\t");
-        Serial.print(anglez, 3);
-        Serial.print("\t");
+        // Serial.print(millis());
+        // Serial.print("\t");
+        Serial.print('A');
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_anglex.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_angley.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_anglez.bytes[i]);
+        }
+        // Serial.print("\t");
+        // Serial.print(angley, 3);
+        // Serial.print("\t");
+        // Serial.print(anglez, 3);
+        // Serial.print("\t");
         // Serial.print(kp);
         // Serial.print("\t");
         // Serial.print(ki);
         // Serial.print("\t");
         // Serial.print(kd);
         // Serial.print("\t");
-        Serial.print(pid_output_x, 3);
-        Serial.print("\t");
-        Serial.print(pid_output_y, 3);
-        Serial.print("\t");
-        Serial.print(pid_output_z, 3);
-        Serial.print("\t");
+        // Serial.print(pid_output_x, 3);
+        // Serial.print("\t");
+        // Serial.print(pid_output_y, 3);
+        // Serial.print("\t");
+        // Serial.print(pid_output_z, 3);
+        // Serial.print("\t");
 
-        Serial.println();
+        Serial.write('\n');
     }
 }
 
