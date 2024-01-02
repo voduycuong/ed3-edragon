@@ -71,6 +71,7 @@ void loop()
     Button2State = Receive_Data.Receive_Button2State;
 
     Get_MPUangle(); // Get the angle from the IMU sensor
+    Get_accelgyro();
     Compute_PID();  // Compute the PID output (motor_cmd)
 
     if (CtrlPWM > 20) // Set threshold for thrust
@@ -96,9 +97,15 @@ FLOATUNION_t send_anglez;
 FLOATUNION_t send_gyrox;
 FLOATUNION_t send_gyroy;
 FLOATUNION_t send_gyroz;
-FLOATUNION_t send_accx;
-FLOATUNION_t send_accy;
-FLOATUNION_t send_accz;
+FLOATUNION_t send_pid_output_x;
+FLOATUNION_t send_pid_output_y;
+FLOATUNION_t send_pid_output_z;
+FLOATUNION_t send_anglex_setpoint;
+FLOATUNION_t send_angley_setpoint;
+FLOATUNION_t send_anglez_setpoint;
+FLOATUNION_t send_gyrox_setpoint;
+FLOATUNION_t send_gyroy_setpoint;
+FLOATUNION_t send_gyroz_setpoint;
 
 void SerialDataPrint()
 {
@@ -108,8 +115,17 @@ void SerialDataPrint()
     send_gyrox.number = gyrox;
     send_gyroy.number = gyroy;
     send_gyroz.number = gyroz;
+    send_pid_output_x.number = pid_output_x;
+    send_pid_output_y.number = pid_output_y;
+    send_pid_output_z.number = pid_output_z;
+    send_anglex_setpoint.number = anglex_setpoint;
+    send_angley_setpoint.number = angley_setpoint;
+    send_anglez_setpoint.number = anglez_setpoint;
+    send_gyrox_setpoint.number = gyrox_setpoint;
+    send_gyroy_setpoint.number = gyroy_setpoint;
+    send_gyroz_setpoint.number = gyroz_setpoint;
 
-    if (micros() - time_prev >= 50000)
+    if (micros() - time_prev >= 10000)
     {
         time_prev = micros();
         // Serial.print(millis());
@@ -132,6 +148,33 @@ void SerialDataPrint()
         }
         for(int i = 0; i < 4; i++) {
             Serial.write(send_gyroz.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_pid_output_x.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_pid_output_y.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_pid_output_z.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_anglex_setpoint.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_angley_setpoint.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_anglez_setpoint.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_gyrox_setpoint.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_gyroy_setpoint.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_gyroz_setpoint.bytes[i]);
         }
         // Serial.print("\t");
         // Serial.print(angley, 3);
