@@ -93,19 +93,28 @@ void loop()
 FLOATUNION_t send_anglex;
 FLOATUNION_t send_angley;
 FLOATUNION_t send_anglez;
+FLOATUNION_t send_gyrox;
+FLOATUNION_t send_gyroy;
+FLOATUNION_t send_gyroz;
+FLOATUNION_t send_accx;
+FLOATUNION_t send_accy;
+FLOATUNION_t send_accz;
 
 void SerialDataPrint()
 {
     send_anglex.number = anglex;
     send_angley.number = angley;
     send_anglez.number = anglez;
+    send_gyrox.number = gyrox;
+    send_gyroy.number = gyroy;
+    send_gyroz.number = gyroz;
 
     if (micros() - time_prev >= 50000)
     {
         time_prev = micros();
         // Serial.print(millis());
         // Serial.print("\t");
-        Serial.print('A');
+        Serial.write('A');
         for(int i = 0; i < 4; i++) {
             Serial.write(send_anglex.bytes[i]);
         }
@@ -114,6 +123,15 @@ void SerialDataPrint()
         }
         for(int i = 0; i < 4; i++) {
             Serial.write(send_anglez.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_gyrox.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_gyroy.bytes[i]);
+        }
+        for(int i = 0; i < 4; i++) {
+            Serial.write(send_gyroz.bytes[i]);
         }
         // Serial.print("\t");
         // Serial.print(angley, 3);
@@ -133,7 +151,7 @@ void SerialDataPrint()
         // Serial.print(pid_output_z, 3);
         // Serial.print("\t");
 
-        Serial.write('\n');
+        Serial.print('\n');
     }
 }
 
