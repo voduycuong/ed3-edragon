@@ -94,9 +94,6 @@ void loop()
 FLOATUNION_t send_anglex;
 FLOATUNION_t send_angley;
 FLOATUNION_t send_anglez;
-FLOATUNION_t send_gyrox;
-FLOATUNION_t send_gyroy;
-FLOATUNION_t send_gyroz;
 FLOATUNION_t send_pid_output_x;
 FLOATUNION_t send_pid_output_y;
 FLOATUNION_t send_pid_output_z;
@@ -112,9 +109,6 @@ void SerialDataPrint()
     send_anglex.number = anglex;
     send_angley.number = angley;
     send_anglez.number = anglez;
-    send_gyrox.number = gyrox;
-    send_gyroy.number = gyroy;
-    send_gyroz.number = gyroz;
     send_pid_output_x.number = pid_output_x;
     send_pid_output_y.number = pid_output_y;
     send_pid_output_z.number = pid_output_z;
@@ -139,15 +133,6 @@ void SerialDataPrint()
         }
         for(int i = 0; i < 4; i++) {
             Serial.write(send_anglez.bytes[i]);
-        }
-        for(int i = 0; i < 4; i++) {
-            Serial.write(send_gyrox.bytes[i]);
-        }
-        for(int i = 0; i < 4; i++) {
-            Serial.write(send_gyroy.bytes[i]);
-        }
-        for(int i = 0; i < 4; i++) {
-            Serial.write(send_gyroz.bytes[i]);
         }
         for(int i = 0; i < 4; i++) {
             Serial.write(send_pid_output_x.bytes[i]);
