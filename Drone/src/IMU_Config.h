@@ -56,7 +56,7 @@ void Get_MPUangle()
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
     anglex = ypr[2] * 180 / M_PI;
     angley = -ypr[1] * 180 / M_PI;
-    anglez = -ypr[0] * 180 / M_PI;
+    anglez = -ypr[0] * 90 / M_PI;
 }
 // ================================================================
 void Get_accelgyro()

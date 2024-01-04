@@ -9,6 +9,10 @@ extern double gyrox;
 extern double gyroy;
 extern double gyroz;
 
+double motor_cmd_x = 0;
+double motor_cmd_y = 0;
+double motor_cmd_z = 0;
+
 // ================================================================
 // Variable declaration
 // ================================================================
@@ -22,31 +26,31 @@ double pid_output_x = 0;
 double pid_output_y = 0;
 double pid_output_z = 0;
 
-// Init gain of accelerate
-double kp_anglex = 2;
-double ki_anglex = 0.0;
-double kd_anglex = 0.1;
+// Init gain of angle
+double kp_anglex = 0.1;
+double ki_anglex = 0.05;
+double kd_anglex = 0.05;
 
-double kp_angley = 2;
-double ki_angley = 0.0;
-double kd_angley = 0.1;
+double kp_angley = 0.1;
+double ki_angley = 0.05;
+double kd_angley = 0.05;
 
-double kp_anglez = 2;
+double kp_anglez = 0.0;
 double ki_anglez = 0.0;
-double kd_anglez = 0.1;
+double kd_anglez = 0.0;
 
-// Init gain of accelerate
-double kp_gyrox = 2;
-double ki_gyrox = 0.0;
-double kd_gyrox = 0.1;
+// Init gain of rate
+double kp_gyrox = 4;
+double ki_gyrox = 0.01;
+double kd_gyrox = 0.15;
 
-double kp_gyroy = 2;
-double ki_gyroy = 0.0;
-double kd_gyroy = 0.1;
+double kp_gyroy = 4;
+double ki_gyroy = 0.01;
+double kd_gyroy = 0.15;
 
-double kp_gyroz = 2;
+double kp_gyroz = 0.0;
 double ki_gyroz = 0.0;
-double kd_gyroz = 0.1;
+double kd_gyroz = 0.0;
 
 // From the remote controller
 double anglex_setpoint = 0;
@@ -56,18 +60,16 @@ double anglez_setpoint = 0;
 double gyrox_setpoint = 0;
 double gyroy_setpoint = 0;
 double gyroz_setpoint = 0;
-// Correct gain
-// double kp = 12.0, ki = 100.0, kd = 0.15, anglex_setpoint = 1;
 
 // Inner loop (fast)
-PID anglexPID(&anglex, &gyrox_setpoint, &anglex_setpoint, kp_anglex, ki_anglex, kd_anglex, DIRECT);
-PID angleyPID(&angley, &gyroy_setpoint, &angley_setpoint, kp_angley, ki_angley, kd_angley, DIRECT);
-PID anglezPID(&anglez, &gyroz_setpoint, &anglez_setpoint, kp_anglez, ki_anglez, kd_anglez, DIRECT);
-
-// Outer (slow)
 PID gyroxPID(&gyrox, &pid_output_x, &gyrox_setpoint, kp_gyrox, ki_gyrox, kd_gyroz, DIRECT);
 PID gyroyPID(&gyroy, &pid_output_y, &gyroy_setpoint, kp_gyroy, ki_gyroy, kd_gyroy, DIRECT);
 PID gyrozPID(&gyroz, &pid_output_z, &gyroz_setpoint, kp_gyroz, ki_gyroz, kd_gyroz, DIRECT);
+
+// Outer loop (slow)
+PID anglexPID(&anglex, &gyrox_setpoint, &anglex_setpoint, kp_anglex, ki_anglex, kd_anglex, DIRECT);
+PID angleyPID(&angley, &gyroy_setpoint, &angley_setpoint, kp_angley, ki_angley, kd_angley, DIRECT);
+PID anglezPID(&anglez, &gyroz_setpoint, &anglez_setpoint, kp_anglez, ki_anglez, kd_anglez, DIRECT);
 
 // ================================================================
 // Function Declaration
@@ -81,27 +83,27 @@ void Compute_PID();
 void Init_PID()
 {
     anglexPID.SetMode(AUTOMATIC);
-    anglexPID.SetOutputLimits(-127, 127);
+    anglexPID.SetOutputLimits(-90, 90);
     anglexPID.SetSampleTime(10);
 
     angleyPID.SetMode(AUTOMATIC);
-    angleyPID.SetOutputLimits(-127, 127);
+    angleyPID.SetOutputLimits(-90, 90);
     angleyPID.SetSampleTime(10);
 
     anglezPID.SetMode(AUTOMATIC);
-    anglezPID.SetOutputLimits(-127, 127);
+    anglezPID.SetOutputLimits(-90, 90);
     anglezPID.SetSampleTime(10);
 
     gyroxPID.SetMode(AUTOMATIC);
-    gyroxPID.SetOutputLimits(-127, 127);
+    gyroxPID.SetOutputLimits(-90, 90);
     gyroxPID.SetSampleTime(10);
 
     gyroyPID.SetMode(AUTOMATIC);
-    gyroyPID.SetOutputLimits(-127, 127);
+    gyroyPID.SetOutputLimits(-90, 90);
     gyroyPID.SetSampleTime(10);
 
     gyrozPID.SetMode(AUTOMATIC);
-    gyrozPID.SetOutputLimits(-127, 127);
+    gyrozPID.SetOutputLimits(-90, 90);
     gyrozPID.SetSampleTime(10);
 }
 // ================================================================
@@ -123,11 +125,15 @@ void Compute_PID()
     gyroyPID.Compute();
     gyrozPID.Compute();
 
-    if (abs(anglex) > 50 || abs(angley) > 50 || abs(anglez) > 50)
-    {
-        pid_output_x = 0; // motor stop when fall
-        pid_output_y = 0; // motor stop when fall
-        pid_output_z = 0; // motor stop when fall
-    }
+    // if (abs(anglex) > 50 || abs(angley) > 50 || abs(anglez) > 50)
+    // {
+    //     pid_output_x = 0; // motor stop when fall
+    //     pid_output_y = 0; // motor stop when fall
+    //     pid_output_z = 0; // motor stop when fall
+    // }
+
+    motor_cmd_x = map(pid_output_x, -90, 90, 0, 180);
+    motor_cmd_y = map(pid_output_y, -90, 90, 0, 180);
+    motor_cmd_z = map(pid_output_z, -90, 90, 0, 180);
 }
 // ================================================================

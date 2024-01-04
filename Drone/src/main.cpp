@@ -70,13 +70,11 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    Run_Motor(); // Send the PID output (motor_cmd) to the motor
+    Get_MPUangle();  // Get the angle from the IMU sensor
+    Get_accelgyro(); // Get rate from IMU sensor
+    Compute_PID();   // Compute the PID output
 
-    if (CtrlPWM > 0) // Set threshold for thrust
-    {
-        Get_MPUangle(); // Get the angle from the IMU sensor
-        Compute_PID();  // Compute the PID output (motor_cmd)
-    }
+    Run_Motor(); // Send the PID output to the motor
 
     SerialDataPrint(); // Print the data on the serial monitor for debugging
     // SerialDataWrite(); // User data to tune the PID parameters
@@ -110,6 +108,14 @@ void SerialDataPrint()
         // Serial.print("\t");
         // Serial.print(gyroz);
         // Serial.print("\t");
+
+        // Serial.println();
+
+        // Serial.print(motor_cmd_x);
+        // Serial.print("\t");
+        // Serial.print(motor_cmd_y);
+        // Serial.print("\t");
+        // Serial.print(motor_cmd_z);
 
         Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
 
@@ -152,7 +158,6 @@ void SerialDataPrint()
         Serial.print(kd_gyroz, 3);
 
         Serial.println();
-        delay(1000);
     }
 }
 
@@ -205,7 +210,7 @@ void SerialDataWrite()
 
         // Option extraction
         option.remove(3, modification.length() - 3);
-        // Value extraction
+        // Value extractionpay1
         value.remove(0, 3);
 
         // P adjustment for angle
@@ -271,19 +276,18 @@ void SerialDataWrite()
             gyroy_setpoint = value.toFloat();
         if (option.equals("gzs"))
             gyroz_setpoint = value.toFloat();
-
-        // Clear input modification
-        modification = "";
-        value = "";
-        option = "";
     }
+    // Clear input modification
+    modification = "";
+    value = "";
+    option = "";
 }
 
 // ******************************************
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
     // debugging serial
-    Serial.print(micros() / 1000);
+    // Serial.print(micros() / 1000);
     // Serial.println("\tData received!");
     // You must copy the incoming data to the local variables
     memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
