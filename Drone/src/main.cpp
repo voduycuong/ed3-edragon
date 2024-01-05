@@ -15,6 +15,9 @@
 // Most of the variables are declared in the personal library
 // Define the incoming data, RECEIVED into this board
 
+// Insert the MAC address of the other board
+uint8_t controllerAddress[] = {0x48, 0xE7, 0x29, 0x9F, 0xDE, 0x7C};
+
 typedef struct struct_msg_Receive
 {
     int Receive_PotValue;
@@ -24,8 +27,23 @@ typedef struct struct_msg_Receive
     bool Receive_Button2State;
 } struct_msg_Receive;
 
+typedef struct struct_msg_Sent
+{
+    int Sent_GpsVal;
+    double Sent_AngleX;
+    double Sent_AngleY;
+    double Sent_AngleZ;
+    double Sent_GyroX;
+    double Sent_GyroY;
+    double Sent_GyroZ;
+    double Sent_PidOutputX;
+    double Sent_PidOutputY;
+    double Sent_PidOutputZ;
+} struct_msg_Sent;
+
 // Declare the structure
 struct_msg_Receive Receive_Data;
+struct_msg_Sent Sent_Data;
 
 // Serial
 unsigned long time_prev_serial = 0;
@@ -45,6 +63,7 @@ void SerialDataWrite(); // Data from the PC to the microcontroller
 void Init_Serial();     // Function to init the serial monitor
 void Init_ESC();
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 float floatMap(float, float, float, float, float);
 void Init_ESPNOW();
 
@@ -79,6 +98,18 @@ void loop()
 
     SerialDataPrint(); // Print the data on the serial monitor for debugging
     SerialDataWrite(); // User data to tune the PID parameters
+
+    // Update Sent Data with Joystick and Button Values
+    Sent_Data.Sent_GpsVal = 0; // Send the joystick X value
+    Sent_Data.Sent_AngleX = anglex;
+    Sent_Data.Sent_AngleY = angley;
+    Sent_Data.Sent_AngleZ = anglez;
+    Sent_Data.Sent_PidOutputX = pid_output_x;
+    Sent_Data.Sent_PidOutputY = pid_output_y;
+    Sent_Data.Sent_PidOutputZ = pid_output_z;
+
+    // Data sent over espnow
+    esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
 
     if (micros() - time_prev_serial >= 20000)
     {
@@ -330,6 +361,15 @@ void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
     // Serial.println("\tData received!");
     // You must copy the incoming data to the local variables
     memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
+}
+
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+{
+    // There is nothing to do when sending data, this is just for debugging
+    // Serial.print(micros() / 1000);
+    // Serial.println("\tData sent!");
+    // Serial.print("\r\nLast Packet Send Status:\t");
+    // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
 // ******************************************
