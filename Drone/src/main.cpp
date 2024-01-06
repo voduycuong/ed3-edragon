@@ -71,6 +71,8 @@ void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 float floatMap(float, float, float, float, float);
 void Init_ESPNOW();
+void Get_GPSData();
+void DisplayInfo();
 
 // ================================================================
 // Setup function
@@ -119,6 +121,7 @@ void loop()
         time_prev_serial = micros();
         SerialDataWrite();
     }
+    Get_GPSData();
 }
 
 // ================================================================
