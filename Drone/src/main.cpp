@@ -154,9 +154,9 @@ void loop()
     // Serial.println(motor_cmd_z);
 
     // Prepare data for sending back to Controller
-    Sent_Data.Sent_Longitude = Longitude;
-    Sent_Data.Sent_Latitude = Latitude;
-    Sent_Data.Sent_Altitude = Altitude;
+    // Sent_Data.Sent_Longitude = Longitude;
+    // Sent_Data.Sent_Latitude = Latitude;
+    // Sent_Data.Sent_Altitude = Altitude;
     Sent_Data.Sent_AngleX = anglex;
     Sent_Data.Sent_AngleY = angley;
     Sent_Data.Sent_AngleZ = anglez;
