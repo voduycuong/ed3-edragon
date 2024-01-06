@@ -95,11 +95,12 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
+    // Serial.println(CtrlPWM);
+
     Get_MPUangle();  // Get the angle from the IMU sensor
     Get_accelgyro(); // Get rate from IMU sensor
     Compute_PID();   // Compute the PID output
-
-    Run_Motor(); // Send the PID output to the motor
+    Run_Motor();     // Send the PID output to the motor
 
     // Prepare data for sending back to Controller
     Sent_Data.Sent_GpsVal = 0;

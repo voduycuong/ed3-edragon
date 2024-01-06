@@ -153,7 +153,7 @@ void loop()
     // Print Joystick Values
     if (millis() - time_prev >= 20000)
     {
-        // time_prev = millis();
+        time_prev = millis();
 
         // Receiving
         time_prev = micros();
@@ -172,10 +172,11 @@ void loop()
         Serial.print(PidOutputY);
         Serial.print("\tPID Z: ");
         Serial.print(PidOutputZ);
+        Serial.print("\t");
+        Serial.print(CtrlPWM);
         Serial.println();
         //______________________
 
-        // Serial.print(CtrlPWM);
         // Serial.print("\tJX: ");
         // Serial.print(JoyVrx);
         // Serial.print("\tJY: ");
