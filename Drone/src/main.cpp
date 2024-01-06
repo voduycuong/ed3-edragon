@@ -76,8 +76,7 @@ void loop()
 
     Run_Motor(); // Send the PID output to the motor
 
-    SerialDataPrint(); // Print the data on the serial monitor for debugging
-    // SerialDataWrite(); // User data to tune the PID parameters
+    // SerialDataPrint(); // Print the data on the serial monitor for debugging
 
     if (micros() - time_prev_serial >= 20000)
     {
@@ -86,81 +85,7 @@ void loop()
     }
 }
 
-// ================================================================
-// Function Definition
-// ================================================================
-void SerialDataPrint()
-{
-    if (micros() - time_prev >= 50000)
-    {
-        time_prev = micros();
-        // Serial.print(millis());
-        // Serial.print("\t");
-        // Serial.print(anglex, 3);
-        // Serial.print("\t");
-        // Serial.print(angley, 3);
-        // Serial.print("\t");
-        // Serial.print(anglez, 3);
-        // Serial.print("\t");
-        // Serial.print(gyrox);
-        // Serial.print("\t");
-        // Serial.print(gyroy);
-        // Serial.print("\t");
-        // Serial.print(gyroz);
-        // Serial.print("\t");
-
-        // Serial.println();
-
-        // Serial.print(motor_cmd_x);
-        // Serial.print("\t");
-        // Serial.print(motor_cmd_y);
-        // Serial.print("\t");
-        // Serial.print(motor_cmd_z);
-
-        Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
-
-        Serial.print(kp_anglex, 3);
-        Serial.print("\t");
-        Serial.print(ki_anglex, 3);
-        Serial.print("\t");
-        Serial.print(kd_anglex, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_angley, 3);
-        Serial.print("\t");
-        Serial.print(ki_angley, 3);
-        Serial.print("\t");
-        Serial.print(kd_angley, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_anglez, 3);
-        Serial.print("\t");
-        Serial.print(ki_anglez, 3);
-        Serial.print("\t");
-        Serial.print(kd_anglez, 3);
-
-        Serial.print("\n");
-
-        Serial.print(kp_gyrox, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyrox, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyrox, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_gyroy, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyroy, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyroy, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_gyroz, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyroz, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyroz, 3);
-
-        Serial.println();
-    }
-}
-
+// ========================
 // ================================================================
 // Function to tune the PID parameters. For example:
 // To change the kp_anglex value to 10, type pax10

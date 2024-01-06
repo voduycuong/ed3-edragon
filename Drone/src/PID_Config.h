@@ -35,20 +35,20 @@ double kp_angley = 0.1;
 double ki_angley = 0.05;
 double kd_angley = 0.05;
 
-double kp_anglez = 0.0;
+double kp_anglez = 1.5;
 double ki_anglez = 0.0;
 double kd_anglez = 0.0;
 
 // Init gain of rate
-double kp_gyrox = 4;
-double ki_gyrox = 0.01;
+double kp_gyrox = 3;
+double ki_gyrox = 0.05;
 double kd_gyrox = 0.15;
 
-double kp_gyroy = 4;
-double ki_gyroy = 0.01;
+double kp_gyroy = 3;
+double ki_gyroy = 0.05;
 double kd_gyroy = 0.15;
 
-double kp_gyroz = 0.0;
+double kp_gyroz = 2.0;
 double ki_gyroz = 0.0;
 double kd_gyroz = 0.0;
 
@@ -125,15 +125,8 @@ void Compute_PID()
     gyroyPID.Compute();
     gyrozPID.Compute();
 
-    // if (abs(anglex) > 50 || abs(angley) > 50 || abs(anglez) > 50)
-    // {
-    //     pid_output_x = 0; // motor stop when fall
-    //     pid_output_y = 0; // motor stop when fall
-    //     pid_output_z = 0; // motor stop when fall
-    // }
-
-    motor_cmd_x = map(pid_output_x, -90, 90, 0, 180);
-    motor_cmd_y = map(pid_output_y, -90, 90, 0, 180);
-    motor_cmd_z = map(pid_output_z, -90, 90, 0, 180);
+    // motor_cmd_x = map(pid_output_x, -90, 90, 0, 180);
+    // motor_cmd_y = map(pid_output_y, -90, 90, 0, 180);
+    // motor_cmd_z = map(pid_output_z, -90, 90, 0, 180);
 }
 // ================================================================
