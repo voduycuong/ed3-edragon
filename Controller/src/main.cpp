@@ -1,7 +1,11 @@
+// Arduino library
 #include <Arduino.h>
 #include <WiFi.h>
 #include <esp_now.h>
 #include <ESP32Servo.h>
+
+// Personal library
+#include "Serial_Config.h" // Configure the serial communication
 //  ================================================================
 //  Variable declaration
 //  ================================================================
@@ -54,6 +58,7 @@ int JoyVrx = 0;
 int JoyVry = 0;
 bool Button1State = false;
 bool Button2State = false;
+int YawVar = 0;
 
 // Received values
 double Longitude = 0;
@@ -65,7 +70,6 @@ double AngleZ = 0;
 double GyroX = 0;
 double GyroY = 0;
 double GyroZ = 0;
-
 
 // Variables for calibrate joystick
 int xMin = 0;
@@ -127,6 +131,14 @@ void loop()
     Button1State = digitalRead(BUTTON_1_PIN); // Button is active-high
     Button2State = digitalRead(BUTTON_2_PIN); // Button is active-high
 
+    if (Button1State)
+    {
+        YawVar--;
+    }
+    if (Button2State)
+    {
+        YawVar++;
+    }
     // Calibrate joystick
     if (JoyVrx < xMid)
         xMapped = map(JoyVrx, xMin, xMid, 0, 2047);
@@ -158,41 +170,6 @@ void loop()
     if (millis() - time_prev >= 20000)
     {
         // time_prev = millis();
-
-        // Receiving
-        time_prev = micros();
-        Serial.print(millis());
-        Serial.print("\tLo: ");
-        Serial.print(Longitude);
-        Serial.print("\tLa: ");
-        Serial.print(Latitude);
-        Serial.print("\tAl: ");
-        Serial.print(Altitude);
-        Serial.print("\tAngleX: ");
-        Serial.print(AngleX);
-        Serial.print("\tAngleY: ");
-        Serial.print(AngleY);
-        Serial.print("\tAngleZ: ");
-        Serial.print(AngleZ);
-        Serial.print("\tGyroX: ");
-        Serial.print(GyroX);
-        Serial.print("\tGyroY: ");
-        Serial.print(GyroY);
-        Serial.print("\tGyroZ: ");
-        Serial.print(GyroZ);
-        Serial.println();
-        //______________________
-
-        // Serial.print(CtrlPWM);
-        // Serial.print("\tJX: ");
-        // Serial.print(JoyVrx);
-        // Serial.print("\tJY: ");
-        // Serial.print(JoyVry);
-        // Serial.print("\tB1: ");
-        // Serial.print(Button1State);
-        // Serial.print("\tB2: ");
-        // Serial.print(Button2State);
-        // Serial.println();
     }
 }
 
@@ -206,14 +183,63 @@ void Init_Serial()
         ;
 }
 // ================================================================
+FLOATUNION_t simulink_longitude;
+FLOATUNION_t simulink_latitude;
+FLOATUNION_t simulink_altitude;
+FLOATUNION_t simulink_anglex;
+FLOATUNION_t simulink_angley;
+FLOATUNION_t simulink_anglez;
+FLOATUNION_t simulink_gyrox;
+FLOATUNION_t simulink_gyroy;
+FLOATUNION_t simulink_gyroz;
+FLOATUNION_t simulink_anglex_setpoint;
+FLOATUNION_t simulink_angley_setpoint;
+FLOATUNION_t simulink_anglez_setpoint;
 void SerialDataPrint()
 {
-    if (micros() - time_prev >= 20000)
+    simulink_longitude.number = Longitude;
+    simulink_latitude.number = Latitude;
+    simulink_altitude.number = Altitude;
+    simulink_anglex.number = AngleX;
+    simulink_angley.number = AngleY;
+    simulink_anglez.number = AngleZ;
+    simulink_gyrox.number = GyroX;
+    simulink_gyroy.number = GyroY;
+    simulink_gyroz.number = GyroZ;
+    simulink_anglex_setpoint.number = JoyVrx;
+    simulink_angley_setpoint.number = JoyVry;
+    simulink_anglez_setpoint.number = YawVar;
+
+    if (micros() - time_prev >= 10000)
     {
         time_prev = micros();
-        Serial.print(millis());
-        Serial.print("\t");
-        // Serial.println(CtrlPWM);
+        Serial.write('A');
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_longitude.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_latitude.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_altitude.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_anglex.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_angley.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_anglez.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_gyrox.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_gyroy.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_gyroz.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_anglex_setpoint.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_angley_setpoint.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_anglez_setpoint.bytes[i]);
+
+        Serial.print('\n');
     }
 }
 // ================================================================

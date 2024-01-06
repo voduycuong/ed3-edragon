@@ -10,7 +10,6 @@
 #include "Serial_Config.h" // Configure the serial communication
 #include "Motor_Config.h"  // Configure the motor
 #include "PID_Config.h"    // Configure the PID
-
 // ================================================================
 // Variable declaration
 // ================================================================
@@ -125,6 +124,9 @@ void loop()
 // Function Definition
 // ================================================================
 // VARIABLES TO SEND
+FLOATUNION_t send_longitude;
+FLOATUNION_t send_latitude;
+FLOATUNION_t send_altitude;
 FLOATUNION_t send_anglex;
 FLOATUNION_t send_angley;
 FLOATUNION_t send_anglez;
