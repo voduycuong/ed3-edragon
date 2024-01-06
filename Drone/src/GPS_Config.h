@@ -68,17 +68,17 @@ void DisplayInfo() {
         Altitude = gps.altitude.meters();
     }
 
-    if (gps.date.isValid()) {
-        Day = gps.date.day();
-        Month = gps.date.month();
-        Year = gps.date.year();
-    }
+    // if (gps.date.isValid()) {
+    //     Day = gps.date.day();
+    //     Month = gps.date.month();
+    //     Year = gps.date.year();
+    // }
 
-    if (gps.time.isValid()) {
-        Hour = gps.time.hour();
-        Minute = gps.time.minute();
-        Second = gps.time.second();
-    }
+    // if (gps.time.isValid()) {
+    //     Hour = gps.time.hour();
+    //     Minute = gps.time.minute();
+    //     Second = gps.time.second();
+    // }
 
     Serial.print("Location: ");
     Serial.print(Latitude, 6);
@@ -86,17 +86,5 @@ void DisplayInfo() {
     Serial.print(Longitude, 6);
     Serial.print("\tAltitude: ");
     Serial.print(Altitude);
-    Serial.println("m");
-    Serial.print("\tDate: ");
-    Serial.print(Day);
-    Serial.print("/");
-    Serial.print(Month);
-    Serial.print("/");
-    Serial.print(Year);
-    Serial.print("\tTime: ");
-    Serial.print(Hour);
-    Serial.print(":");
-    Serial.print(Minute);
-    Serial.print(":");
-    Serial.println(Second);
+    Serial.println();
 }
