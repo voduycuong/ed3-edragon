@@ -301,6 +301,30 @@ FLOATUNION_t simulink_gyroz;
 FLOATUNION_t simulink_anglex_setpoint;
 FLOATUNION_t simulink_angley_setpoint;
 FLOATUNION_t simulink_anglez_setpoint;
+
+FLOATUNION_t simulink_kp_anglex;
+FLOATUNION_t simulink_ki_anglex;
+FLOATUNION_t simulink_kd_anglex;
+
+FLOATUNION_t simulink_kp_angley;
+FLOATUNION_t simulink_ki_angley;
+FLOATUNION_t simulink_kd_angley;
+
+FLOATUNION_t simulink_kp_anglez;
+FLOATUNION_t simulink_ki_anglez;
+FLOATUNION_t simulink_kd_anglez;
+
+FLOATUNION_t simulink_kp_gyrox;
+FLOATUNION_t simulink_ki_gyrox;
+FLOATUNION_t simulink_kd_gyrox;
+
+FLOATUNION_t simulink_kp_gyroy;
+FLOATUNION_t simulink_ki_gyroy;
+FLOATUNION_t simulink_kd_gyroy;
+
+FLOATUNION_t simulink_kp_gyroz;
+FLOATUNION_t simulink_ki_gyroz;
+FLOATUNION_t simulink_kd_gyroz;
 void SerialDataPrint()
 {
     simulink_longitude.number = Longitude;
@@ -315,6 +339,30 @@ void SerialDataPrint()
     simulink_anglex_setpoint.number = JoyVrx;
     simulink_angley_setpoint.number = JoyVry;
     simulink_anglez_setpoint.number = YawVar;
+
+    simulink_kp_anglex.number = kp_anglex;
+    simulink_ki_anglex.number = ki_anglex;
+    simulink_kd_anglex.number = kd_anglex;
+
+    simulink_kp_angley.number = kp_angley;
+    simulink_ki_angley.number = ki_angley;
+    simulink_kd_angley.number = kd_angley;
+
+    simulink_kp_anglez.number = kp_anglez;
+    simulink_ki_anglez.number = ki_anglez;
+    simulink_kd_anglez.number = kd_anglez;
+
+    simulink_kp_gyrox.number = kp_gyrox;
+    simulink_ki_gyrox.number = ki_gyrox;
+    simulink_kd_gyrox.number = kd_gyrox;
+
+    simulink_kp_gyroy.number = kp_gyroy;
+    simulink_ki_gyroy.number = ki_gyroy;
+    simulink_kd_gyroy.number = kd_gyroy;
+
+    simulink_kp_gyroz.number = kp_gyroz;
+    simulink_ki_gyroz.number = ki_gyroz;
+    simulink_kd_gyroz.number = kd_gyroz;
 
     if (micros() - time_prev >= 10000)
     {
@@ -344,6 +392,48 @@ void SerialDataPrint()
             Serial.write(simulink_angley_setpoint.bytes[i]);
         for (int i = 0; i < 4; i++)
             Serial.write(simulink_anglez_setpoint.bytes[i]);
+            
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kp_anglex.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_ki_anglex.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kd_anglex.bytes[i]);
+
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kp_angley.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_ki_angley.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kd_angley.bytes[i]);
+
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kp_anglez.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_ki_anglez.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kd_anglez.bytes[i]);
+
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kp_gyroz.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_ki_gyroz.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kd_gyroz.bytes[i]);
+
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kp_gyroz.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_ki_gyroz.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kd_gyroz.bytes[i]);
+
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kp_gyroz.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_ki_gyroz.bytes[i]);
+        for (int i = 0; i < 4; i++)
+            Serial.write(simulink_kd_gyroz.bytes[i]);
 
         Serial.print('\n');
     }
