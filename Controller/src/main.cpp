@@ -7,7 +7,7 @@
 //  ================================================================
 #define POT_PIN 34          // Pin 34 attached to the potentiometer
 #define JOYSTICK_VRX_PIN 32 // Pin 32 attached to the VRX
-#define JOYSTICK_VRY_PIN 33 // Pin 33 attached to the VRY
+#define JOYSTICK_VRY_PIN 33 // Pin 33 atxtached to the VRY
 #define BUTTON_1_PIN 39     // Pin 39 attached to the Button 1
 #define BUTTON_2_PIN 36     // Pin 36 attached to the Button 2
 
@@ -175,16 +175,16 @@ void loop()
         Serial.println();
         //______________________
 
-        Serial.print(CtrlPWM);
-        Serial.print("\tJX: ");
-        Serial.print(JoyVrx);
-        Serial.print("\tJY: ");
-        Serial.print(JoyVry);
-        Serial.print("\tB1: ");
-        Serial.print(Button1State);
-        Serial.print("\tB2: ");
-        Serial.print(Button2State);
-        Serial.println();
+        // Serial.print(CtrlPWM);
+        // Serial.print("\tJX: ");
+        // Serial.print(JoyVrx);
+        // Serial.print("\tJY: ");
+        // Serial.print(JoyVry);
+        // Serial.print("\tB1: ");
+        // Serial.print(Button1State);
+        // Serial.print("\tB2: ");
+        // Serial.print(Button2State);
+        // Serial.println();
     }
 }
 
@@ -255,6 +255,7 @@ void espnow_initialize()
         return;
     }
     esp_now_register_send_cb(OnDataSent);
+    esp_now_register_recv_cb(OnDataReceive);
 
     // Register peer
     memcpy(peerInfo.peer_addr, droneAddress, 6);
