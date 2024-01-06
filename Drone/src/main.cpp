@@ -4,16 +4,20 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <string.h>
+#include <TinyGPSPlus.h>
 
 // Personal library
 #include "IMU_Config.h"    // Configure the MPU6050
 #include "Serial_Config.h" // Configure the serial communication
 #include "Motor_Config.h"  // Configure the motor
 #include "PID_Config.h"    // Configure the PID
+#include "GPS_Config.h"    // Configure GPS
 
 // ================================================================
 // Variable declaration
 // ================================================================
+#define RXD2 16
+#define TXD2 17
 // Most of the variables are declared in the personal library
 // Define the incoming data, RECEIVED into this board
 
@@ -70,6 +74,8 @@ void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 float floatMap(float, float, float, float, float);
 void Init_ESPNOW();
+void Get_GPSData();
+void DisplayInfo();
 
 // ================================================================
 // Setup function
@@ -119,6 +125,7 @@ void loop()
         time_prev_serial = micros();
         SerialDataWrite();
     }
+    Get_GPSData();
 }
 
 // ================================================================
