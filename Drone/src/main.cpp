@@ -1,22 +1,25 @@
-#include <Arduino.h> // Arduino library
+// Arduino library
+#include <Arduino.h>
 #include <ESP32Servo.h>
 #include <esp_now.h>
 #include <WiFi.h>
 #include <string.h>
 #include <TinyGPSPlus.h>
 
-#include "IMU_Config.h"    // Personal library to configure the MPU6050
-#include "Serial_Config.h" // Personal library to configure the serial communication
-#include "Motor_Config.h"  // Personal library to configure the motor
-#include "PID_Config.h"    // Personal library to configure the PID
-#include "GPS_Config.h"
-
+// Personal library
+#include "IMU_Config.h"    // Configure the MPU6050
+#include "Serial_Config.h" // Configure the serial communication
+#include "Motor_Config.h"  // Configure the motor
+#include "PID_Config.h"    // Configure the PID
 
 // ================================================================
 // Variable declaration
 // ================================================================
 // Most of the variables are declared in the personal library
 // Define the incoming data, RECEIVED into this board
+
+// Insert the MAC address of the other board
+uint8_t controllerAddress[] = {0x48, 0xE7, 0x29, 0x9F, 0xDE, 0x7C};
 
 typedef struct struct_msg_Receive
 {
@@ -27,8 +30,25 @@ typedef struct struct_msg_Receive
     bool Receive_Button2State;
 } struct_msg_Receive;
 
+typedef struct struct_msg_Sent
+{
+    int Sent_GpsVal;
+    double Sent_AngleX;
+    double Sent_AngleY;
+    double Sent_AngleZ;
+    double Sent_GyroX;
+    double Sent_GyroY;
+    double Sent_GyroZ;
+    double Sent_PidOutputX;
+    double Sent_PidOutputY;
+    double Sent_PidOutputZ;
+} struct_msg_Sent;
+
 // Declare the structure
 struct_msg_Receive Receive_Data;
+struct_msg_Sent Sent_Data;
+
+esp_now_peer_info_t peerInfo;
 
 // Serial
 unsigned long time_prev_serial = 0;
@@ -48,6 +68,7 @@ void SerialDataWrite(); // Data from the PC to the microcontroller
 void Init_Serial();     // Function to init the serial monitor
 void Init_ESC();
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 float floatMap(float, float, float, float, float);
 void Init_ESPNOW();
 
@@ -56,34 +77,42 @@ void Init_ESPNOW();
 // ================================================================
 void setup()
 {
+    // Initialization
     Init_ESPNOW();
-    Init_Serial(); // Initialize Serial Communication
-    Init_MPU();    // Initialize MPU
-    Init_PID();    // Initialize PID
-    Init_ESC();    // Initializa ESC
-    
+    Init_Serial();
+    Init_MPU();
+    Init_PID();
+    Init_ESC();
 }
 // ================================================================
 // Loop function
 // ================================================================
 void loop()
 {
+    // Get data from controller
     CtrlPWM = Receive_Data.Receive_PotValue;
     JoyVrx = Receive_Data.Receive_JoyVrx;
     JoyVry = Receive_Data.Receive_JoyVry;
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    Run_Motor(); // Send the PID output (motor_cmd) to the motor
+    Get_MPUangle();  // Get the angle from the IMU sensor
+    Get_accelgyro(); // Get rate from IMU sensor
+    Compute_PID();   // Compute the PID output
 
-    if (CtrlPWM > 0) // Set threshold for thrust
-    {
-        Get_MPUangle(); // Get the angle from the IMU sensor
-        Compute_PID();  // Compute the PID output (motor_cmd)
-    }
+    Run_Motor(); // Send the PID output to the motor
 
-    SerialDataPrint(); // Print the data on the serial monitor for debugging
-    // SerialDataWrite(); // User data to tune the PID parameters
+    // Prepare data for sending back to Controller
+    Sent_Data.Sent_GpsVal = 0;
+    Sent_Data.Sent_AngleX = anglex;
+    Sent_Data.Sent_AngleY = angley;
+    Sent_Data.Sent_AngleZ = anglez;
+    Sent_Data.Sent_PidOutputX = pid_output_x;
+    Sent_Data.Sent_PidOutputY = pid_output_y;
+    Sent_Data.Sent_PidOutputZ = pid_output_z;
+
+    // Data sent over espnow
+    esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
 
     if (micros() - time_prev_serial >= 20000)
     {
@@ -95,71 +124,73 @@ void loop()
 // ================================================================
 // Function Definition
 // ================================================================
+// VARIABLES TO SEND
+FLOATUNION_t send_anglex;
+FLOATUNION_t send_angley;
+FLOATUNION_t send_anglez;
+FLOATUNION_t send_pid_output_x;
+FLOATUNION_t send_pid_output_y;
+FLOATUNION_t send_pid_output_z;
+FLOATUNION_t send_anglex_setpoint;
+FLOATUNION_t send_angley_setpoint;
+FLOATUNION_t send_anglez_setpoint;
+FLOATUNION_t send_gyrox_setpoint;
+FLOATUNION_t send_gyroy_setpoint;
+FLOATUNION_t send_gyroz_setpoint;
+
 void SerialDataPrint()
 {
-    if (micros() - time_prev >= 50000)
+    send_anglex.number = anglex;
+    send_angley.number = angley;
+    send_anglez.number = anglez;
+    send_pid_output_x.number = pid_output_x;
+    send_pid_output_y.number = pid_output_y;
+    send_pid_output_z.number = pid_output_z;
+    send_anglex_setpoint.number = anglex_setpoint;
+    send_angley_setpoint.number = angley_setpoint;
+    send_anglez_setpoint.number = anglez_setpoint;
+    send_gyrox_setpoint.number = gyrox_setpoint;
+    send_gyroy_setpoint.number = gyroy_setpoint;
+    send_gyroz_setpoint.number = gyroz_setpoint;
+
+    if (micros() - time_prev >= 10000)
     {
         time_prev = micros();
         // Serial.print(millis());
         // Serial.print("\t");
-        // Serial.print(anglex, 3);
-        // Serial.print("\t");
-        // Serial.print(angley, 3);
-        // Serial.print("\t");
-        // Serial.print(anglez, 3);
-        // Serial.print("\t");
-        // Serial.print(gyrox);
-        // Serial.print("\t");
-        // Serial.print(gyroy);
-        // Serial.print("\t");
-        // Serial.print(gyroz);
-        // Serial.print("\t");
+        Serial.print('A');
+        for (int i = 0; i < 4; i++)
+        {
+            Serial.write('A');
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_anglex.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_angley.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_anglez.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_pid_output_x.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_pid_output_y.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_pid_output_z.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_anglex_setpoint.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_angley_setpoint.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_anglez_setpoint.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_gyrox_setpoint.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_gyroy_setpoint.bytes[i]);
+            for (int i = 0; i < 4; i++)
+                Serial.write(send_gyroz_setpoint.bytes[i]);
 
-        Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
-
-        Serial.print(kp_anglex, 3);
-        Serial.print("\t");
-        Serial.print(ki_anglex, 3);
-        Serial.print("\t");
-        Serial.print(kd_anglex, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_angley, 3);
-        Serial.print("\t");
-        Serial.print(ki_angley, 3);
-        Serial.print("\t");
-        Serial.print(kd_angley, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_anglez, 3);
-        Serial.print("\t");
-        Serial.print(ki_anglez, 3);
-        Serial.print("\t");
-        Serial.print(kd_anglez, 3);
-
-        Serial.print("\n");
-
-        Serial.print(kp_gyrox, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyrox, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyrox, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_gyroy, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyroy, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyroy, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_gyroz, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyroz, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyroz, 3);
-
-        Serial.println();
-        delay(1000);
+            Serial.print('\n');
+        }
     }
 }
-
 // ================================================================
 // Function to tune the PID parameters. For example:
 // To change the kp_anglex value to 10, type pax10
@@ -209,7 +240,7 @@ void SerialDataWrite()
 
         // Option extraction
         option.remove(3, modification.length() - 3);
-        // Value extraction
+        // Value extractionpay1
         value.remove(0, 3);
 
         // P adjustment for angle
@@ -275,22 +306,30 @@ void SerialDataWrite()
             gyroy_setpoint = value.toFloat();
         if (option.equals("gzs"))
             gyroz_setpoint = value.toFloat();
-
-        // Clear input modification
-        modification = "";
-        value = "";
-        option = "";
     }
+    // Clear input modification
+    modification = "";
+    value = "";
+    option = "";
 }
 
 // ******************************************
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
     // debugging serial
-    Serial.print(micros() / 1000);
+    // Serial.print(micros() / 1000);
     // Serial.println("\tData received!");
     // You must copy the incoming data to the local variables
     memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
+}
+
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+{
+    // There is nothing to do when sending data, this is just for debugging
+    // Serial.print(micros() / 1000);
+    // Serial.println("\tData sent!");
+    // Serial.print("\r\nLast Packet Send Status:\t");
+    // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
 // ******************************************
@@ -309,4 +348,17 @@ void Init_ESPNOW()
         return;
     }
     esp_now_register_recv_cb(OnDataReceive);
+    esp_now_register_send_cb(OnDataSent);
+
+    // Register peer
+    memcpy(peerInfo.peer_addr, controllerAddress, 6);
+    peerInfo.channel = 0;
+    peerInfo.encrypt = false;
+
+    // Add peer
+    if (esp_now_add_peer(&peerInfo) != ESP_OK)
+    {
+        Serial.println("Failed to add peer");
+        return;
+    }
 }
