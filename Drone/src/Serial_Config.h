@@ -1,4 +1,8 @@
 #include <Arduino.h>
+
+#define RXD2 16
+#define TXD2 17
+
 unsigned long time_prev = 0;
 
 typedef union {

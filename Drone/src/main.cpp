@@ -11,10 +11,13 @@
 #include "Serial_Config.h" // Configure the serial communication
 #include "Motor_Config.h"  // Configure the motor
 #include "PID_Config.h"    // Configure the PID
+#include "GPS_Config.h"    // Configure GPS
 
 // ================================================================
 // Variable declaration
 // ================================================================
+#define RXD2 16
+#define TXD2 17
 // Most of the variables are declared in the personal library
 // Define the incoming data, RECEIVED into this board
 

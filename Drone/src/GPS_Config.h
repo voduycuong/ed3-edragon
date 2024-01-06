@@ -9,6 +9,9 @@
 
 TinyGPSPlus gps;
 
+void Get_GPSData();
+void DisplayInfo();
+
 // GPS data variables
 double Latitude = 0;
 double Longitude = 0;
