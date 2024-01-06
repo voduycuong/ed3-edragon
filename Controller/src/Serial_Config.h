@@ -1,7 +1,9 @@
 #include <Arduino.h>
+#include <Wire.h>
 unsigned long time_prev = 0;
 
-typedef union {
+typedef union
+{
     float number;
     uint8_t bytes[4];
 } FLOATUNION_t;

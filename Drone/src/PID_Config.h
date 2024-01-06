@@ -40,13 +40,13 @@ double ki_anglez = 0.0;
 double kd_anglez = 0.0;
 
 // Init gain of rate
-double kp_gyrox = 0.0;
+double kp_gyrox = 2.0;
 double ki_gyrox = 0.0;
-double kd_gyrox = 0.0;
+double kd_gyrox = 0.001;
 
-double kp_gyroy = 0.0;
+double kp_gyroy = 2.0;
 double ki_gyroy = 0.0;
-double kd_gyroy = 0.0;
+double kd_gyroy = 0.001;
 
 double kp_gyroz = 0.0;
 double ki_gyroz = 0.0;

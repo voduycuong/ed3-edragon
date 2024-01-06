@@ -142,7 +142,7 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    Get_MPUangle();  // Get the angle from the IMU sensor
+    Get_MPUangle(); // Get the angle from the IMU sensor
     Get_GPSData();
     Get_accelgyro(); // Get rate from IMU sensor
     Compute_PID();   // Compute the PID output
@@ -155,15 +155,35 @@ void loop()
     // Serial.println(motor_cmd_z);
 
     // Prepare data for sending back to Controller
-    // Sent_Data.Sent_Longitude = Longitude;
-    // Sent_Data.Sent_Latitude = Latitude;
-    // Sent_Data.Sent_Altitude = Altitude;
+    Sent_Data.Sent_Longitude = 0;
+    Sent_Data.Sent_Latitude = 0;
+    Sent_Data.Sent_Altitude = 0;
     Sent_Data.Sent_AngleX = anglex;
     Sent_Data.Sent_AngleY = angley;
     Sent_Data.Sent_AngleZ = anglez;
     Sent_Data.Sent_GyroX = gyrox;
     Sent_Data.Sent_GyroY = gyroy;
     Sent_Data.Sent_GyroZ = gyroz;
+
+    Sent_Data.Sent_kp_anglex = kp_anglex;
+    Sent_Data.Sent_ki_anglex = ki_anglex;
+    Sent_Data.Sent_kd_anglex = kd_anglex;
+    Sent_Data.Sent_kp_angley = kp_angley;
+    Sent_Data.Sent_ki_angley = ki_angley;
+    Sent_Data.Sent_kd_angley = kd_angley;
+    Sent_Data.Sent_kp_anglez = kp_anglez;
+    Sent_Data.Sent_ki_anglez = ki_anglez;
+    Sent_Data.Sent_kd_anglez = kd_anglez;
+
+    Sent_Data.Sent_kp_gyrox = kp_gyrox;
+    Sent_Data.Sent_ki_gyrox = ki_gyrox;
+    Sent_Data.Sent_kd_gyrox = kd_gyrox;
+    Sent_Data.Sent_kp_gyroy = kp_gyroy;
+    Sent_Data.Sent_ki_gyroy = ki_gyroy;
+    Sent_Data.Sent_kd_gyroy = kd_gyroy;
+    Sent_Data.Sent_kp_gyroz = kp_gyroz;
+    Sent_Data.Sent_ki_gyroz = ki_gyroz;
+    Sent_Data.Sent_kd_gyroz = kd_gyroz;
 
     // if (micros() - time_prev_serial >= 20000)
     // {
@@ -177,10 +197,6 @@ void loop()
 
 // ================================================================
 // Function Definition
-// ================================================================
-void SerialDataPrint()
-{
-}
 // ================================================================
 // Function to tune the PID parameters. For example:
 // To change the kp_anglex value to 10, type pax10

@@ -100,30 +100,26 @@ double GyroY = 0;
 double GyroZ = 0;
 
 // Init gain of angle
-double kp_anglex;
-double ki_anglex;
-double kd_anglex;
-
-double kp_angley;
-double ki_angley;
-double kd_angley;
-
-double kp_anglez;
-double ki_anglez;
-double kd_anglez;
+double kp_anglex = 0.0;
+double ki_anglex = 0.0;
+double kd_anglex = 0.0;
+double kp_angley = 0.0;
+double ki_angley = 0.0;
+double kd_angley = 0.0;
+double kp_anglez = 0.0;
+double ki_anglez = 0.0;
+double kd_anglez = 0.0;
 
 // Init gain of rate
-double kp_gyrox;
-double ki_gyrox;
-double kd_gyrox;
-
-double kp_gyroy;
-double ki_gyroy;
-double kd_gyroy;
-
-double kp_gyroz;
-double ki_gyroz;
-double kd_gyroz;
+double kp_gyrox = 0.0;
+double ki_gyrox = 0.0;
+double kd_gyrox = 0.0;
+double kp_gyroy = 0.0;
+double ki_gyroy = 0.0;
+double kd_gyroy = 0.0;
+double kp_gyroz = 0.0;
+double ki_gyroz = 0.0;
+double kd_gyroz = 0.0;
 
 // Variables for calibrate joystick
 int xMin = 0;
@@ -135,7 +131,6 @@ int yMax = 4095;
 int xMapped = 0;
 int yMapped = 0;
 
-unsigned long time_prev = 0; // Variable used for serial monitoring
 // ================================================================
 // Function declaration
 // ================================================================
@@ -237,7 +232,49 @@ void loop()
     if (micros() - time_prev_serial >= 20000)
     {
         time_prev_serial = micros();
-        SerialDataPrint(); // Print data on the serial monitor for debugging
+        // SerialDataPrint(); // Print data on the serial monitor for debugging
+
+        Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
+
+        Serial.print(kp_anglex, 3);
+        Serial.print("\t");
+        Serial.print(ki_anglex, 3);
+        Serial.print("\t");
+        Serial.print(kd_anglex, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_angley, 3);
+        Serial.print("\t");
+        Serial.print(ki_angley, 3);
+        Serial.print("\t");
+        Serial.print(kd_angley, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_anglez, 3);
+        Serial.print("\t");
+        Serial.print(ki_anglez, 3);
+        Serial.print("\t");
+        Serial.print(kd_anglez, 3);
+
+        Serial.print("\n");
+
+        Serial.print(kp_gyrox, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyrox, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyrox, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_gyroy, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyroy, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyroy, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_gyroz, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyroz, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyroz, 3);
+
+        Serial.println();
     }
 
     // // Print Joystick Values
@@ -281,13 +318,6 @@ void loop()
 
 // ================================================================
 // Function definition
-// ================================================================
-void Init_Serial()
-{
-    Serial.begin(115200);
-    while (!Serial)
-        ;
-}
 // ================================================================
 FLOATUNION_t simulink_longitude;
 FLOATUNION_t simulink_latitude;
@@ -392,7 +422,7 @@ void SerialDataPrint()
             Serial.write(simulink_angley_setpoint.bytes[i]);
         for (int i = 0; i < 4; i++)
             Serial.write(simulink_anglez_setpoint.bytes[i]);
-            
+
         for (int i = 0; i < 4; i++)
             Serial.write(simulink_kp_anglex.bytes[i]);
         for (int i = 0; i < 4; i++)
