@@ -8,8 +8,8 @@
 #define POT_PIN 34          // Pin 34 attached to the potentiometer
 #define JOYSTICK_VRX_PIN 32 // Pin 32 attached to the VRX
 #define JOYSTICK_VRY_PIN 33 // Pin 33 atxtached to the VRY
-#define BUTTON_1_PIN 39     // Pin 39 attached to the Button 1
-#define BUTTON_2_PIN 36     // Pin 36 attached to the Button 2
+#define BUTTON_1_PIN 39     // Pin 39 attached to the Button 1 // Top
+#define BUTTON_2_PIN 36     // Pin 36 attached to the Button 2 // Bottom
 
 // Insert the MAC address of the other board
 uint8_t droneAddress[] = {0x48, 0xE7, 0x29, 0xA0, 0x11, 0x98};
@@ -37,6 +37,31 @@ typedef struct struct_msg_Receive
     double Receive_PidOutputX;
     double Receive_PidOutputY;
     double Receive_PidOutputZ;
+
+    double Receive_kp_anglex;
+    double Receive_ki_anglex;
+    double Receive_kd_anglex;
+
+    double Receive_kp_angley;
+    double Receive_ki_angley;
+    double Receive_kd_angley;
+
+    double Receive_kp_anglez;
+    double Receive_ki_anglez;
+    double Receive_kd_anglez;
+
+    double Receive_kp_gyrox;
+    double Receive_ki_gyrox;
+    double Receive_kd_gyrox;
+
+    double Receive_kp_gyroy;
+    double Receive_ki_gyroy;
+    double Receive_kd_gyroy;
+
+    double Receive_kp_gyroz;
+    double Receive_ki_gyroz;
+    double Receive_kd_gyroz;
+
 } struct_msg_Receive;
 
 // Declare the structure
@@ -64,6 +89,32 @@ double AngleZ = 0;
 double PidOutputX = 0;
 double PidOutputY = 0;
 double PidOutputZ = 0;
+
+// Init gain of angle
+double kp_anglex;
+double ki_anglex;
+double kd_anglex;
+
+double kp_angley;
+double ki_angley;
+double kd_angley;
+
+double kp_anglez;
+double ki_anglez;
+double kd_anglez;
+
+// Init gain of rate
+double kp_gyrox;
+double ki_gyrox;
+double kd_gyrox;
+
+double kp_gyroy;
+double ki_gyroy;
+double kd_gyroy;
+
+double kp_gyroz;
+double ki_gyroz;
+double kd_gyroz;
 
 // Variables for calibrate joystick
 int xMin = 0;
@@ -113,6 +164,26 @@ void loop()
     PidOutputY = Receive_Data.Receive_PidOutputY;
     PidOutputZ = Receive_Data.Receive_PidOutputZ;
 
+    kp_anglex = Receive_Data.Receive_kp_anglex;
+    ki_anglex = Receive_Data.Receive_ki_anglex;
+    kd_anglex = Receive_Data.Receive_kd_anglex;
+    kp_angley = Receive_Data.Receive_kp_angley;
+    ki_angley = Receive_Data.Receive_ki_angley;
+    kd_angley = Receive_Data.Receive_kd_angley;
+    kp_anglez = Receive_Data.Receive_kp_anglez;
+    ki_anglez = Receive_Data.Receive_ki_anglez;
+    kd_anglez = Receive_Data.Receive_kd_anglez;
+
+    kp_gyrox = Receive_Data.Receive_kp_gyrox;
+    ki_gyrox = Receive_Data.Receive_ki_gyrox;
+    kd_gyrox = Receive_Data.Receive_kd_gyrox;
+    kp_gyroy = Receive_Data.Receive_kp_gyroy;
+    ki_gyroy = Receive_Data.Receive_ki_gyroy;
+    kd_gyroy = Receive_Data.Receive_kd_gyroy;
+    kp_gyroz = Receive_Data.Receive_kp_gyroz;
+    ki_gyroz = Receive_Data.Receive_ki_gyroz;
+    kd_gyroz = Receive_Data.Receive_kd_gyroz;
+
     CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180); // Read the pot, map the reading from [0, 4095] to [0, 180]
 
     // Read Joystick Values
@@ -150,43 +221,43 @@ void loop()
         SerialDataPrint(); // Print data on the serial monitor for debugging
     }
 
-    // Print Joystick Values
-    if (millis() - time_prev >= 20000)
-    {
-        time_prev = millis();
+    // // Print Joystick Values
+    // if (millis() - time_prev >= 20000)
+    // {
+    //     time_prev = millis();
 
-        // Receiving
-        time_prev = micros();
-        Serial.print(millis());
-        Serial.print("\tGPS: ");
-        Serial.print(GpsVal);
-        Serial.print("\tAngleX: ");
-        Serial.print(AngleX);
-        Serial.print("\tAngleY: ");
-        Serial.print(AngleY);
-        Serial.print("\tAngleZ: ");
-        Serial.print(AngleZ);
-        Serial.print("\tPID X: ");
-        Serial.print(PidOutputX);
-        Serial.print("\tPID Y: ");
-        Serial.print(PidOutputY);
-        Serial.print("\tPID Z: ");
-        Serial.print(PidOutputZ);
-        Serial.print("\t");
-        Serial.print(CtrlPWM);
-        Serial.println();
-        //______________________
+    //     // Receiving
+    //     time_prev = micros();
+    //     Serial.print(millis());
+    //     Serial.print("\tGPS: ");
+    //     Serial.print(GpsVal);
+    //     Serial.print("\tAngleX: ");
+    //     Serial.print(AngleX);
+    //     Serial.print("\tAngleY: ");
+    //     Serial.print(AngleY);
+    //     Serial.print("\tAngleZ: ");
+    //     Serial.print(AngleZ);
+    //     Serial.print("\tPID X: ");
+    //     Serial.print(PidOutputX);
+    //     Serial.print("\tPID Y: ");
+    //     Serial.print(PidOutputY);
+    //     Serial.print("\tPID Z: ");
+    //     Serial.print(PidOutputZ);
+    //     Serial.print("\t");
+    //     Serial.print(CtrlPWM);
+    //     Serial.println();
+    //-----------------------------------------
 
-        // Serial.print("\tJX: ");
-        // Serial.print(JoyVrx);
-        // Serial.print("\tJY: ");
-        // Serial.print(JoyVry);
-        // Serial.print("\tB1: ");
-        // Serial.print(Button1State);
-        // Serial.print("\tB2: ");
-        // Serial.print(Button2State);
-        // Serial.println();
-    }
+    // Serial.print("\tJX: ");
+    // Serial.print(JoyVrx);
+    // Serial.print("\tJY: ");
+    // Serial.print(JoyVry);
+    // Serial.print("\tB1: ");
+    // Serial.print(Button1State);
+    // Serial.print("\tB2: ");
+    // Serial.print(Button2State);
+    // Serial.println();
+    // }
 }
 
 // ================================================================

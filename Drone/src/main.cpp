@@ -41,7 +41,46 @@ typedef struct struct_msg_Sent
     double Sent_PidOutputX;
     double Sent_PidOutputY;
     double Sent_PidOutputZ;
+
+    double Sent_kp_anglex;
+    double Sent_ki_anglex;
+    double Sent_kd_anglex;
+
+    double Sent_kp_angley;
+    double Sent_ki_angley;
+    double Sent_kd_angley;
+
+    double Sent_kp_anglez;
+    double Sent_ki_anglez;
+    double Sent_kd_anglez;
+
+    double Sent_kp_gyrox;
+    double Sent_ki_gyrox;
+    double Sent_kd_gyrox;
+
+    double Sent_kp_gyroy;
+    double Sent_ki_gyroy;
+    double Sent_kd_gyroy;
+
+    double Sent_kp_gyroz;
+    double Sent_ki_gyroz;
+    double Sent_kd_gyroz;
+
 } struct_msg_Sent;
+
+// VARIABLES TO SEND
+FLOATUNION_t send_anglex;
+FLOATUNION_t send_angley;
+FLOATUNION_t send_anglez;
+FLOATUNION_t send_pid_output_x;
+FLOATUNION_t send_pid_output_y;
+FLOATUNION_t send_pid_output_z;
+FLOATUNION_t send_anglex_setpoint;
+FLOATUNION_t send_angley_setpoint;
+FLOATUNION_t send_anglez_setpoint;
+FLOATUNION_t send_gyrox_setpoint;
+FLOATUNION_t send_gyroy_setpoint;
+FLOATUNION_t send_gyroz_setpoint;
 
 // Declare the structure
 struct_msg_Receive Receive_Data;
@@ -62,14 +101,14 @@ bool Button2State = false; // 0 - unpressed. 1 - pressed
 // Function Declaration
 // ================================================================
 // These function are kept in the main.cpp because it is easier to modify
-void SerialDataPrint(); // Data from the microcontroller to the PC
-void SerialDataWrite(); // Data from the PC to the microcontroller
-void Init_Serial();     // Function to init the serial monitor
+void Init_Serial(); // Function to init the serial monitor
 void Init_ESC();
+void Init_ESPNOW();
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 float floatMap(float, float, float, float, float);
-void Init_ESPNOW();
+void SerialDataPrint(); // Data from the microcontroller to the PC
+void SerialDataWrite(); // Data from the PC to the microcontroller
 
 // ================================================================
 // Setup function
@@ -77,11 +116,11 @@ void Init_ESPNOW();
 void setup()
 {
     // Initialization
-    Init_ESPNOW();
     Init_Serial();
     Init_MPU();
     Init_PID();
     Init_ESC();
+    Init_ESPNOW();
 }
 // ================================================================
 // Loop function
@@ -95,12 +134,16 @@ void loop()
     Button1State = Receive_Data.Receive_Button1State;
     Button2State = Receive_Data.Receive_Button2State;
 
-    // Serial.println(CtrlPWM);
-
     Get_MPUangle();  // Get the angle from the IMU sensor
     Get_accelgyro(); // Get rate from IMU sensor
     Compute_PID();   // Compute the PID output
     Run_Motor();     // Send the PID output to the motor
+
+    // // Debugging
+    // Serial.println(CtrlPWM);
+    // Serial.println(motor_cmd_x);
+    // Serial.println(motor_cmd_y);
+    // Serial.println(motor_cmd_z);
 
     // Prepare data for sending back to Controller
     Sent_Data.Sent_GpsVal = 0;
@@ -111,32 +154,19 @@ void loop()
     Sent_Data.Sent_PidOutputY = pid_output_y;
     Sent_Data.Sent_PidOutputZ = pid_output_z;
 
-    // Data sent over espnow
-    esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
-
     if (micros() - time_prev_serial >= 20000)
     {
         time_prev_serial = micros();
         SerialDataWrite();
     }
+
+    // Data sent over espnow
+    esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
 }
 
 // ================================================================
 // Function Definition
 // ================================================================
-// VARIABLES TO SEND
-FLOATUNION_t send_anglex;
-FLOATUNION_t send_angley;
-FLOATUNION_t send_anglez;
-FLOATUNION_t send_pid_output_x;
-FLOATUNION_t send_pid_output_y;
-FLOATUNION_t send_pid_output_z;
-FLOATUNION_t send_anglex_setpoint;
-FLOATUNION_t send_angley_setpoint;
-FLOATUNION_t send_anglez_setpoint;
-FLOATUNION_t send_gyrox_setpoint;
-FLOATUNION_t send_gyroy_setpoint;
-FLOATUNION_t send_gyroz_setpoint;
 
 void SerialDataPrint()
 {
