@@ -4,16 +4,20 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <string.h>
+#include <TinyGPSPlus.h>
 
 // Personal library
 #include "IMU_Config.h"    // Configure the MPU6050
 #include "Serial_Config.h" // Configure the serial communication
 #include "Motor_Config.h"  // Configure the motor
 #include "PID_Config.h"    // Configure the PID
+#include "GPS_Config.h"    // Configure GPS
 
 // ================================================================
 // Variable declaration
 // ================================================================
+#define RXD2 16
+#define TXD2 17
 // Most of the variables are declared in the personal library
 // Define the incoming data, RECEIVED into this board
 
@@ -31,7 +35,9 @@ typedef struct struct_msg_Receive
 
 typedef struct struct_msg_Sent
 {
-    int Sent_GpsVal;
+    double Sent_Longitude;
+    double Sent_Latitude;
+    double Sent_Altitude;
     double Sent_AngleX;
     double Sent_AngleY;
     double Sent_AngleZ;
@@ -109,6 +115,8 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 float floatMap(float, float, float, float, float);
 void SerialDataPrint(); // Data from the microcontroller to the PC
 void SerialDataWrite(); // Data from the PC to the microcontroller
+void Get_GPSData();
+void DisplayInfo();
 
 // ================================================================
 // Setup function
@@ -146,42 +154,58 @@ void loop()
     // Serial.println(motor_cmd_z);
 
     // Prepare data for sending back to Controller
-    Sent_Data.Sent_GpsVal = 0;
+    Sent_Data.Sent_Longitude = Longitude;
+    Sent_Data.Sent_Latitude = Latitude;
+    Sent_Data.Sent_Altitude = Altitude;
     Sent_Data.Sent_AngleX = anglex;
     Sent_Data.Sent_AngleY = angley;
     Sent_Data.Sent_AngleZ = anglez;
-    Sent_Data.Sent_PidOutputX = pid_output_x;
-    Sent_Data.Sent_PidOutputY = pid_output_y;
-    Sent_Data.Sent_PidOutputZ = pid_output_z;
+    Sent_Data.Sent_GyroX = gyrox;
+    Sent_Data.Sent_GyroY = gyroy;
+    Sent_Data.Sent_GyroZ = gyroz;
 
     if (micros() - time_prev_serial >= 20000)
     {
         time_prev_serial = micros();
         SerialDataWrite();
     }
+<<<<<<< HEAD
 
     // Data sent over espnow
     esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
+    == == == =
+                 Get_GPSData();
+>>>>>>> f62a78670e087c27fc05e8c12e9e3d8ae4047a54
 }
 
 // ================================================================
 // Function Definition
 // ================================================================
+<<<<<<< HEAD
+== == == =
+             // VARIABLES TO SEND
+    FLOATUNION_t send_longitude;
+FLOATUNION_t send_latitude;
+FLOATUNION_t send_altitude;
+FLOATUNION_t send_anglex;
+FLOATUNION_t send_angley;
+FLOATUNION_t send_anglez;
+FLOATUNION_t send_gyrox;
+FLOATUNION_t send_gyroy;
+FLOATUNION_t send_gyroz;
+FLOATUNION_t send_anglex_setpoint;
+FLOATUNION_t send_angley_setpoint;
+FLOATUNION_t send_anglez_setpoint;
+>>>>>>> f62a78670e087c27fc05e8c12e9e3d8ae4047a54
 
 void SerialDataPrint()
 {
     send_anglex.number = anglex;
     send_angley.number = angley;
     send_anglez.number = anglez;
-    send_pid_output_x.number = pid_output_x;
-    send_pid_output_y.number = pid_output_y;
-    send_pid_output_z.number = pid_output_z;
     send_anglex_setpoint.number = anglex_setpoint;
     send_angley_setpoint.number = angley_setpoint;
     send_anglez_setpoint.number = anglez_setpoint;
-    send_gyrox_setpoint.number = gyrox_setpoint;
-    send_gyroy_setpoint.number = gyroy_setpoint;
-    send_gyroz_setpoint.number = gyroz_setpoint;
 
     if (micros() - time_prev >= 10000)
     {
@@ -192,30 +216,30 @@ void SerialDataPrint()
         for (int i = 0; i < 4; i++)
         {
             Serial.write('A');
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_anglex.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_angley.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_anglez.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_pid_output_x.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_pid_output_y.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_pid_output_z.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_anglex_setpoint.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_angley_setpoint.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_anglez_setpoint.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_gyrox_setpoint.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_gyroy_setpoint.bytes[i]);
-            for (int i = 0; i < 4; i++)
-                Serial.write(send_gyroz_setpoint.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_anglex.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_angley.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_anglez.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_pid_output_x.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_pid_output_y.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_pid_output_z.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_anglex_setpoint.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_angley_setpoint.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_anglez_setpoint.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_gyrox_setpoint.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_gyroy_setpoint.bytes[i]);
+            // for (int i = 0; i < 4; i++)
+            //     Serial.write(send_gyroz_setpoint.bytes[i]);
 
             Serial.print('\n');
         }
