@@ -143,6 +143,7 @@ void loop()
     Button2State = Receive_Data.Receive_Button2State;
 
     Get_MPUangle();  // Get the angle from the IMU sensor
+    Get_GPSData();
     Get_accelgyro(); // Get rate from IMU sensor
     Compute_PID();   // Compute the PID output
     Run_Motor();     // Send the PID output to the motor
@@ -164,15 +165,14 @@ void loop()
     Sent_Data.Sent_GyroY = gyroy;
     Sent_Data.Sent_GyroZ = gyroz;
 
-    if (micros() - time_prev_serial >= 20000)
-    {
-        time_prev_serial = micros();
-        SerialDataWrite();
-    }
+    // if (micros() - time_prev_serial >= 20000)
+    // {
+    //     time_prev_serial = micros();
+    //     SerialDataWrite();
+    // }
 
     // Data sent over espnow
     esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
-    Get_GPSData();
 }
 
 // ================================================================
@@ -180,50 +180,6 @@ void loop()
 // ================================================================
 void SerialDataPrint()
 {
-    send_anglex.number = anglex;
-    send_angley.number = angley;
-    send_anglez.number = anglez;
-    send_anglex_setpoint.number = anglex_setpoint;
-    send_angley_setpoint.number = angley_setpoint;
-    send_anglez_setpoint.number = anglez_setpoint;
-
-    if (micros() - time_prev >= 10000)
-    {
-        time_prev = micros();
-        // Serial.print(millis());
-        // Serial.print("\t");
-        Serial.print('A');
-        for (int i = 0; i < 4; i++)
-        {
-            Serial.write('A');
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_anglex.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_angley.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_anglez.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_pid_output_x.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_pid_output_y.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_pid_output_z.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_anglex_setpoint.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_angley_setpoint.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_anglez_setpoint.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_gyrox_setpoint.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_gyroy_setpoint.bytes[i]);
-            // for (int i = 0; i < 4; i++)
-            //     Serial.write(send_gyroz_setpoint.bytes[i]);
-
-            Serial.print('\n');
-        }
-    }
 }
 // ================================================================
 // Function to tune the PID parameters. For example:
