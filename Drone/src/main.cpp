@@ -169,35 +169,15 @@ void loop()
         time_prev_serial = micros();
         SerialDataWrite();
     }
-<<<<<<< HEAD
 
     // Data sent over espnow
     esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
-    == == == =
-                 Get_GPSData();
->>>>>>> f62a78670e087c27fc05e8c12e9e3d8ae4047a54
+    Get_GPSData();
 }
 
 // ================================================================
 // Function Definition
 // ================================================================
-<<<<<<< HEAD
-== == == =
-             // VARIABLES TO SEND
-    FLOATUNION_t send_longitude;
-FLOATUNION_t send_latitude;
-FLOATUNION_t send_altitude;
-FLOATUNION_t send_anglex;
-FLOATUNION_t send_angley;
-FLOATUNION_t send_anglez;
-FLOATUNION_t send_gyrox;
-FLOATUNION_t send_gyroy;
-FLOATUNION_t send_gyroz;
-FLOATUNION_t send_anglex_setpoint;
-FLOATUNION_t send_angley_setpoint;
-FLOATUNION_t send_anglez_setpoint;
->>>>>>> f62a78670e087c27fc05e8c12e9e3d8ae4047a54
-
 void SerialDataPrint()
 {
     send_anglex.number = anglex;
