@@ -11,5 +11,7 @@ void Init_Serial()
         Wire.write(0x6B);
         Wire.write(0x00);
         Wire.endTransmission(true);
+        
     };
+    Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
 }

@@ -3,11 +3,14 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <string.h>
+#include <TinyGPSPlus.h>
 
 #include "IMU_Config.h"    // Personal library to configure the MPU6050
 #include "Serial_Config.h" // Personal library to configure the serial communication
 #include "Motor_Config.h"  // Personal library to configure the motor
 #include "PID_Config.h"    // Personal library to configure the PID
+#include "GPS_Config.h"
+
 
 // ================================================================
 // Variable declaration
@@ -58,6 +61,7 @@ void setup()
     Init_MPU();    // Initialize MPU
     Init_PID();    // Initialize PID
     Init_ESC();    // Initializa ESC
+    
 }
 // ================================================================
 // Loop function
