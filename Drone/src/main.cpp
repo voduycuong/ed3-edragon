@@ -1,13 +1,15 @@
-#include <Arduino.h> // Arduino library
+// Arduino library
+#include <Arduino.h>
 #include <ESP32Servo.h>
 #include <esp_now.h>
 #include <WiFi.h>
 #include <string.h>
 
-#include "IMU_Config.h"    // Personal library to configure the MPU6050
-#include "Serial_Config.h" // Personal library to configure the serial communication
-#include "Motor_Config.h"  // Personal library to configure the motor
-#include "PID_Config.h"    // Personal library to configure the PID
+// Personal library
+#include "IMU_Config.h"    // Configure the MPU6050
+#include "Serial_Config.h" // Configure the serial communication
+#include "Motor_Config.h"  // Configure the motor
+#include "PID_Config.h"    // Configure the PID
 
 // ================================================================
 // Variable declaration
@@ -45,6 +47,8 @@ typedef struct struct_msg_Sent
 struct_msg_Receive Receive_Data;
 struct_msg_Sent Sent_Data;
 
+esp_now_peer_info_t peerInfo;
+
 // Serial
 unsigned long time_prev_serial = 0;
 
@@ -72,17 +76,19 @@ void Init_ESPNOW();
 // ================================================================
 void setup()
 {
+    // Initialization
     Init_ESPNOW();
-    Init_Serial(); // Initialize Serial Communication
-    Init_MPU();    // Initialize MPU
-    Init_PID();    // Initialize PID
-    Init_ESC();    // Initializa ESC
+    Init_Serial();
+    Init_MPU();
+    Init_PID();
+    Init_ESC();
 }
 // ================================================================
 // Loop function
 // ================================================================
 void loop()
 {
+    // Get data from controller
     CtrlPWM = Receive_Data.Receive_PotValue;
     JoyVrx = Receive_Data.Receive_JoyVrx;
     JoyVry = Receive_Data.Receive_JoyVry;
@@ -95,10 +101,8 @@ void loop()
 
     Run_Motor(); // Send the PID output to the motor
 
-    // SerialDataPrint(); // Print the data on the serial monitor for debugging
-
-    // Update Sent Data with Joystick and Button Values
-    Sent_Data.Sent_GpsVal = 0; // Send the joystick X value
+    // Prepare data for sending back to Controller
+    Sent_Data.Sent_GpsVal = 0;
     Sent_Data.Sent_AngleX = anglex;
     Sent_Data.Sent_AngleY = angley;
     Sent_Data.Sent_AngleZ = anglez;
@@ -158,230 +162,202 @@ void SerialDataPrint()
         {
             Serial.write('A');
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_anglex.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_angley.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_anglez.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_pid_output_x.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_pid_output_y.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_pid_output_z.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_anglex_setpoint.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_angley_setpoint.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_anglez_setpoint.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_gyrox_setpoint.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_gyroy_setpoint.bytes[i]);
-            }
             for (int i = 0; i < 4; i++)
-            {
                 Serial.write(send_gyroz_setpoint.bytes[i]);
-            }
-            // Serial.print("\t");
-            // Serial.print(angley, 3);
-            // Serial.print("\t");
-            // Serial.print(anglez, 3);
-            // Serial.print("\t");
-            // Serial.print(kp);
-            // Serial.print("\t");
-            // Serial.print(ki);
-            // Serial.print("\t");
-            // Serial.print(kd);
-            // Serial.print("\t");
-            // Serial.print(pid_output_x, 3);
-            // Serial.print("\t");
-            // Serial.print(pid_output_y, 3);
-            // Serial.print("\t");
-            // Serial.print(pid_output_z, 3);
-            // Serial.print("\t");
 
             Serial.print('\n');
         }
     }
+}
+// ================================================================
+// Function to tune the PID parameters. For example:
+// To change the kp_anglex value to 10, type pax10
+// To change the ki_anglex value to -5, type iax-5
+// To change the kd_anglex value to 2.4, type dax2.4
 
-    // ================================================================
-    // Function to tune the PID parameters. For example:
-    // To change the kp_anglex value to 10, type pax10
-    // To change the ki_anglex value to -5, type iax-5
-    // To change the kd_anglex value to 2.4, type dax2.4
+// To change the kp_angley value to 10, type pay10
+// To change the ki_angley value to -5, type iay-5
+// To change the kd_angley value to 2.4, type day2.4
 
-    // To change the kp_angley value to 10, type pay10
-    // To change the ki_angley value to -5, type iay-5
-    // To change the kd_angley value to 2.4, type day2.4
+// To change the kp_anglez value to 10, type paz10
+// To change the ki_anglez value to -5, type iaz-5
+// To change the kd_anglez value to 2.4, type daz2.4
 
-    // To change the kp_anglez value to 10, type paz10
-    // To change the ki_anglez value to -5, type iaz-5
-    // To change the kd_anglez value to 2.4, type daz2.4
+// To change the kp_gyrox value to 10, type pgx10
+// To change the ki_gyrox value to -5, type igx-5
+// To change the kd_gyrox value to 2.4, type dgx2.4
 
-    // To change the kp_gyrox value to 10, type pgx10
-    // To change the ki_gyrox value to -5, type igx-5
-    // To change the kd_gyrox value to 2.4, type dgx2.4
+// To change the kp_gyroy value to 10, type pgy10
+// To change the ki_gyroy value to -5, type igy-5
+// To change the kd_gyroy value to 2.4, type dgy2.4
 
-    // To change the kp_gyroy value to 10, type pgy10
-    // To change the ki_gyroy value to -5, type igy-5
-    // To change the kd_gyroy value to 2.4, type dgy2.4
+// To change the kp_gyroz value to 10, type pgz10
+// To change the ki_gyroz value to -5, type igz-5
+// To change the kd_gyroz value to 2.4, type dgz2.4
 
-    // To change the kp_gyroz value to 10, type pgz10
-    // To change the ki_gyroz value to -5, type igz-5
-    // To change the kd_gyroz value to 2.4, type dgz2.4
+// To change the anglex_setpoint to 3, type axs3
+// To change the angley_setpoint to 3, type ays3
+// To change the anglez_setpoint to 3, type azs3
 
-    // To change the anglex_setpoint to 3, type axs3
-    // To change the angley_setpoint to 3, type ays3
-    // To change the anglez_setpoint to 3, type azs3
+// To change the gyrox_setpoint to 3, type gxs3
+// To change the gyroy_setpoint to 3, type gys3
+// To change the gyroz_setpoint to 3, type gzs3
 
-    // To change the gyrox_setpoint to 3, type gxs3
-    // To change the gyroy_setpoint to 3, type gys3
-    // To change the gyroz_setpoint to 3, type gzs3
-
-    void SerialDataWrite()
+void SerialDataWrite()
+{
+    static String modification = "";
+    static String value = "";
+    static String option = "";
+    while (Serial.available())
     {
-        static String modification = "";
-        static String value = "";
-        static String option = "";
-        while (Serial.available())
-        {
-            // Read from serial monitor
-            char inChar = (char)Serial.read();
-            modification += inChar;
-            option = modification;
-            value = modification;
+        // Read from serial monitor
+        char inChar = (char)Serial.read();
+        modification += inChar;
+        option = modification;
+        value = modification;
 
-            // Option extraction
-            option.remove(3, modification.length() - 3);
-            // Value extractionpay1
-            value.remove(0, 3);
+        // Option extraction
+        option.remove(3, modification.length() - 3);
+        // Value extractionpay1
+        value.remove(0, 3);
 
-            // P adjustment for angle
-            if (option.equals("pax"))
-                kp_anglex = value.toFloat();
-            if (option.equals("pay"))
-                kp_angley = value.toFloat();
-            if (option.equals("paz"))
-                kp_anglez = value.toFloat();
+        // P adjustment for angle
+        if (option.equals("pax"))
+            kp_anglex = value.toFloat();
+        if (option.equals("pay"))
+            kp_angley = value.toFloat();
+        if (option.equals("paz"))
+            kp_anglez = value.toFloat();
 
-            // I adjustment for angle
-            if (option.equals("iax"))
-                ki_anglex = value.toFloat();
-            if (option.equals("iay"))
-                ki_angley = value.toFloat();
-            if (option.equals("iaz"))
-                ki_anglez = value.toFloat();
+        // I adjustment for angle
+        if (option.equals("iax"))
+            ki_anglex = value.toFloat();
+        if (option.equals("iay"))
+            ki_angley = value.toFloat();
+        if (option.equals("iaz"))
+            ki_anglez = value.toFloat();
 
-            // D adjustment for angle
-            if (option.equals("dax"))
-                kd_anglex = value.toFloat();
-            if (option.equals("day"))
-                kd_angley = value.toFloat();
-            if (option.equals("daz"))
-                kd_anglez = value.toFloat();
+        // D adjustment for angle
+        if (option.equals("dax"))
+            kd_anglex = value.toFloat();
+        if (option.equals("day"))
+            kd_angley = value.toFloat();
+        if (option.equals("daz"))
+            kd_anglez = value.toFloat();
 
-            // P adjustment for gyro
-            if (option.equals("pgx"))
-                kp_gyrox = value.toFloat();
-            if (option.equals("pgy"))
-                kp_gyroy = value.toFloat();
-            if (option.equals("pgz"))
-                kp_gyroz = value.toFloat();
+        // P adjustment for gyro
+        if (option.equals("pgx"))
+            kp_gyrox = value.toFloat();
+        if (option.equals("pgy"))
+            kp_gyroy = value.toFloat();
+        if (option.equals("pgz"))
+            kp_gyroz = value.toFloat();
 
-            // I adjustment for gyro
-            if (option.equals("igx"))
-                ki_gyrox = value.toFloat();
-            if (option.equals("igy"))
-                ki_gyroy = value.toFloat();
-            if (option.equals("igz"))
-                ki_gyroz = value.toFloat();
+        // I adjustment for gyro
+        if (option.equals("igx"))
+            ki_gyrox = value.toFloat();
+        if (option.equals("igy"))
+            ki_gyroy = value.toFloat();
+        if (option.equals("igz"))
+            ki_gyroz = value.toFloat();
 
-            // D adjustment for gyro
-            if (option.equals("dgx"))
-                kd_gyrox = value.toFloat();
-            if (option.equals("dgy"))
-                kd_gyroy = value.toFloat();
-            if (option.equals("dgz"))
-                kd_gyroz = value.toFloat();
+        // D adjustment for gyro
+        if (option.equals("dgx"))
+            kd_gyrox = value.toFloat();
+        if (option.equals("dgy"))
+            kd_gyroy = value.toFloat();
+        if (option.equals("dgz"))
+            kd_gyroz = value.toFloat();
 
-            // Setpoint adjustment for angle
-            if (option.equals("axs"))
-                anglex_setpoint = value.toFloat();
-            if (option.equals("ays"))
-                angley_setpoint = value.toFloat();
-            if (option.equals("azs"))
-                anglez_setpoint = value.toFloat();
+        // Setpoint adjustment for angle
+        if (option.equals("axs"))
+            anglex_setpoint = value.toFloat();
+        if (option.equals("ays"))
+            angley_setpoint = value.toFloat();
+        if (option.equals("azs"))
+            anglez_setpoint = value.toFloat();
 
-            // Setpoint adjustment for gyro
-            if (option.equals("gxs"))
-                gyrox_setpoint = value.toFloat();
-            if (option.equals("gys"))
-                gyroy_setpoint = value.toFloat();
-            if (option.equals("gzs"))
-                gyroz_setpoint = value.toFloat();
-        }
-        // Clear input modification
-        modification = "";
-        value = "";
-        option = "";
+        // Setpoint adjustment for gyro
+        if (option.equals("gxs"))
+            gyrox_setpoint = value.toFloat();
+        if (option.equals("gys"))
+            gyroy_setpoint = value.toFloat();
+        if (option.equals("gzs"))
+            gyroz_setpoint = value.toFloat();
     }
+    // Clear input modification
+    modification = "";
+    value = "";
+    option = "";
+}
 
-    // ******************************************
-    void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
+// ******************************************
+void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len)
+{
+    // debugging serial
+    // Serial.print(micros() / 1000);
+    // Serial.println("\tData received!");
+    // You must copy the incoming data to the local variables
+    memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
+}
+
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+{
+    // There is nothing to do when sending data, this is just for debugging
+    // Serial.print(micros() / 1000);
+    // Serial.println("\tData sent!");
+    // Serial.print("\r\nLast Packet Send Status:\t");
+    // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+}
+
+// ******************************************
+float floatMap(float x, float in_min, float in_max, float out_min, float out_max)
+{
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+// ******************************************
+void Init_ESPNOW()
+{
+    WiFi.mode(WIFI_STA);
+    if (esp_now_init() != ESP_OK)
     {
-        // debugging serial
-        // Serial.print(micros() / 1000);
-        // Serial.println("\tData received!");
-        // You must copy the incoming data to the local variables
-        memcpy(&Receive_Data, incomingData, sizeof(Receive_Data));
+        Serial.println("Error initializing ESP-NOW");
+        return;
     }
+    esp_now_register_recv_cb(OnDataReceive);
+    esp_now_register_send_cb(OnDataSent);
 
-    void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
-    {
-        // There is nothing to do when sending data, this is just for debugging
-        // Serial.print(micros() / 1000);
-        // Serial.println("\tData sent!");
-        // Serial.print("\r\nLast Packet Send Status:\t");
-        // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-    }
+    // Register peer
+    memcpy(peerInfo.peer_addr, controllerAddress, 6);
+    peerInfo.channel = 0;
+    peerInfo.encrypt = false;
 
-    // ******************************************
-    float floatMap(float x, float in_min, float in_max, float out_min, float out_max)
+    // Add peer
+    if (esp_now_add_peer(&peerInfo) != ESP_OK)
     {
-        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        Serial.println("Failed to add peer");
+        return;
     }
-
-    // ******************************************
-    void Init_ESPNOW()
-    {
-        WiFi.mode(WIFI_STA);
-        if (esp_now_init() != ESP_OK)
-        {
-            Serial.println("Error initializing ESP-NOW");
-            return;
-        }
-        esp_now_register_recv_cb(OnDataReceive);
-    }
+}
