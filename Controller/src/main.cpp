@@ -27,16 +27,15 @@ typedef struct struct_msg_Sent
 // Define the incoming data
 typedef struct struct_msg_Receive
 {
-    int Receive_GpsVal; // replace with TinyGPSPlus object later
+    double Receive_Longitude;
+    double Receive_Latitude;
+    double Receive_Altitude;
     double Receive_AngleX;
     double Receive_AngleY;
     double Receive_AngleZ;
     double Receive_GyroX;
     double Receive_GyroY;
     double Receive_GyroZ;
-    double Receive_PidOutputX;
-    double Receive_PidOutputY;
-    double Receive_PidOutputZ;
 } struct_msg_Receive;
 
 // Declare the structure
@@ -57,13 +56,16 @@ bool Button1State = false;
 bool Button2State = false;
 
 // Received values
-int GpsVal = 0;
+double Longitude = 0;
+double Latitude = 0;
+double Altitude = 0;
 double AngleX = 0;
 double AngleY = 0;
 double AngleZ = 0;
-double PidOutputX = 0;
-double PidOutputY = 0;
-double PidOutputZ = 0;
+double GyroX = 0;
+double GyroY = 0;
+double GyroZ = 0;
+
 
 // Variables for calibrate joystick
 int xMin = 0;
@@ -105,13 +107,15 @@ void setup()
 // ================================================================
 void loop()
 {
-    GpsVal = Receive_Data.Receive_GpsVal;
+    Longitude = Receive_Data.Receive_Longitude;
+    Latitude = Receive_Data.Receive_Latitude;
+    Altitude = Receive_Data.Receive_Altitude;
     AngleX = Receive_Data.Receive_AngleX;
     AngleY = Receive_Data.Receive_AngleY;
     AngleZ = Receive_Data.Receive_AngleZ;
-    PidOutputX = Receive_Data.Receive_PidOutputX;
-    PidOutputY = Receive_Data.Receive_PidOutputY;
-    PidOutputZ = Receive_Data.Receive_PidOutputZ;
+    GyroX = Receive_Data.Receive_GyroX;
+    GyroY = Receive_Data.Receive_GyroY;
+    GyroZ = Receive_Data.Receive_GyroZ;
 
     CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180); // Read the pot, map the reading from [0, 4095] to [0, 180]
 
@@ -158,20 +162,24 @@ void loop()
         // Receiving
         time_prev = micros();
         Serial.print(millis());
-        Serial.print("\tGPS: ");
-        Serial.print(GpsVal);
+        Serial.print("\tLo: ");
+        Serial.print(Longitude);
+        Serial.print("\tLa: ");
+        Serial.print(Latitude);
+        Serial.print("\tAl: ");
+        Serial.print(Altitude);
         Serial.print("\tAngleX: ");
         Serial.print(AngleX);
         Serial.print("\tAngleY: ");
         Serial.print(AngleY);
         Serial.print("\tAngleZ: ");
         Serial.print(AngleZ);
-        Serial.print("\tPID X: ");
-        Serial.print(PidOutputX);
-        Serial.print("\tPID Y: ");
-        Serial.print(PidOutputY);
-        Serial.print("\tPID Z: ");
-        Serial.print(PidOutputZ);
+        Serial.print("\tGyroX: ");
+        Serial.print(GyroX);
+        Serial.print("\tGyroY: ");
+        Serial.print(GyroY);
+        Serial.print("\tGyroZ: ");
+        Serial.print(GyroZ);
         Serial.println();
         //______________________
 
