@@ -44,29 +44,29 @@ typedef struct struct_msg_Receive
     double Receive_PidOutputY;
     double Receive_PidOutputZ;
 
-    double Receive_kp_anglex;
-    double Receive_ki_anglex;
-    double Receive_kd_anglex;
+    // double Receive_kp_anglex;
+    // double Receive_ki_anglex;
+    // double Receive_kd_anglex;
 
-    double Receive_kp_angley;
-    double Receive_ki_angley;
-    double Receive_kd_angley;
+    // double Receive_kp_angley;
+    // double Receive_ki_angley;
+    // double Receive_kd_angley;
 
-    double Receive_kp_anglez;
-    double Receive_ki_anglez;
-    double Receive_kd_anglez;
+    // double Receive_kp_anglez;
+    // double Receive_ki_anglez;
+    // double Receive_kd_anglez;
 
-    double Receive_kp_gyrox;
-    double Receive_ki_gyrox;
-    double Receive_kd_gyrox;
+    // double Receive_kp_gyrox;
+    // double Receive_ki_gyrox;
+    // double Receive_kd_gyrox;
 
-    double Receive_kp_gyroy;
-    double Receive_ki_gyroy;
-    double Receive_kd_gyroy;
+    // double Receive_kp_gyroy;
+    // double Receive_ki_gyroy;
+    // double Receive_kd_gyroy;
 
-    double Receive_kp_gyroz;
-    double Receive_ki_gyroz;
-    double Receive_kd_gyroz;
+    // double Receive_kp_gyroz;
+    // double Receive_ki_gyroz;
+    // double Receive_kd_gyroz;
 
 } struct_msg_Receive;
 
@@ -170,25 +170,25 @@ void loop()
     GyroY = Receive_Data.Receive_GyroY;
     GyroZ = Receive_Data.Receive_GyroZ;
 
-    kp_anglex = Receive_Data.Receive_kp_anglex;
-    ki_anglex = Receive_Data.Receive_ki_anglex;
-    kd_anglex = Receive_Data.Receive_kd_anglex;
-    kp_angley = Receive_Data.Receive_kp_angley;
-    ki_angley = Receive_Data.Receive_ki_angley;
-    kd_angley = Receive_Data.Receive_kd_angley;
-    kp_anglez = Receive_Data.Receive_kp_anglez;
-    ki_anglez = Receive_Data.Receive_ki_anglez;
-    kd_anglez = Receive_Data.Receive_kd_anglez;
+    // kp_anglex = Receive_Data.Receive_kp_anglex;
+    // ki_anglex = Receive_Data.Receive_ki_anglex;
+    // kd_anglex = Receive_Data.Receive_kd_anglex;
+    // kp_angley = Receive_Data.Receive_kp_angley;
+    // ki_angley = Receive_Data.Receive_ki_angley;
+    // kd_angley = Receive_Data.Receive_kd_angley;
+    // kp_anglez = Receive_Data.Receive_kp_anglez;
+    // ki_anglez = Receive_Data.Receive_ki_anglez;
+    // kd_anglez = Receive_Data.Receive_kd_anglez;
 
-    kp_gyrox = Receive_Data.Receive_kp_gyrox;
-    ki_gyrox = Receive_Data.Receive_ki_gyrox;
-    kd_gyrox = Receive_Data.Receive_kd_gyrox;
-    kp_gyroy = Receive_Data.Receive_kp_gyroy;
-    ki_gyroy = Receive_Data.Receive_ki_gyroy;
-    kd_gyroy = Receive_Data.Receive_kd_gyroy;
-    kp_gyroz = Receive_Data.Receive_kp_gyroz;
-    ki_gyroz = Receive_Data.Receive_ki_gyroz;
-    kd_gyroz = Receive_Data.Receive_kd_gyroz;
+    // kp_gyrox = Receive_Data.Receive_kp_gyrox;
+    // ki_gyrox = Receive_Data.Receive_ki_gyrox;
+    // kd_gyrox = Receive_Data.Receive_kd_gyrox;
+    // kp_gyroy = Receive_Data.Receive_kp_gyroy;
+    // ki_gyroy = Receive_Data.Receive_ki_gyroy;
+    // kd_gyroy = Receive_Data.Receive_kd_gyroy;
+    // kp_gyroz = Receive_Data.Receive_kp_gyroz;
+    // ki_gyroz = Receive_Data.Receive_ki_gyroz;
+    // kd_gyroz = Receive_Data.Receive_kd_gyroz;
 
     CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180); // Read the pot, map the reading from [0, 4095] to [0, 180]
 
@@ -234,50 +234,50 @@ void loop()
         time_prev_serial = micros();
         // SerialDataPrint(); // Print data on the serial monitor for debugging
 
-        Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
+        // Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
 
-        Serial.print(kp_anglex, 3);
-        Serial.print("\t");
-        Serial.print(ki_anglex, 3);
-        Serial.print("\t");
-        Serial.print(kd_anglex, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_angley, 3);
-        Serial.print("\t");
-        Serial.print(ki_angley, 3);
-        Serial.print("\t");
-        Serial.print(kd_angley, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_anglez, 3);
-        Serial.print("\t");
-        Serial.print(ki_anglez, 3);
-        Serial.print("\t");
-        Serial.print(kd_anglez, 3);
+        // Serial.print(kp_anglex, 3);
+        // Serial.print("\t");
+        // Serial.print(ki_anglex, 3);
+        // Serial.print("\t");
+        // Serial.print(kd_anglex, 3);
+        // Serial.print("\t\t");
+        // Serial.print(kp_angley, 3);
+        // Serial.print("\t");
+        // Serial.print(ki_angley, 3);
+        // Serial.print("\t");
+        // Serial.print(kd_angley, 3);
+        // Serial.print("\t\t");
+        // Serial.print(kp_anglez, 3);
+        // Serial.print("\t");
+        // Serial.print(ki_anglez, 3);
+        // Serial.print("\t");
+        // Serial.print(kd_anglez, 3);
 
-        Serial.print("\n");
+        // Serial.print("\n");
 
-        Serial.print(kp_gyrox, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyrox, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyrox, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_gyroy, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyroy, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyroy, 3);
-        Serial.print("\t\t");
-        Serial.print(kp_gyroz, 3);
-        Serial.print("\t");
-        Serial.print(ki_gyroz, 3);
-        Serial.print("\t");
-        Serial.print(kd_gyroz, 3);
+        // Serial.print(kp_gyrox, 3);
+        // Serial.print("\t");
+        // Serial.print(ki_gyrox, 3);
+        // Serial.print("\t");
+        // Serial.print(kd_gyrox, 3);
+        // Serial.print("\t\t");
+        // Serial.print(kp_gyroy, 3);
+        // Serial.print("\t");
+        // Serial.print(ki_gyroy, 3);
+        // Serial.print("\t");
+        // Serial.print(kd_gyroy, 3);
+        // Serial.print("\t\t");
+        // Serial.print(kp_gyroz, 3);
+        // Serial.print("\t");
+        // Serial.print(ki_gyroz, 3);
+        // Serial.print("\t");
+        // Serial.print(kd_gyroz, 3);
 
-        Serial.println();
+        // Serial.println();
     }
 
-    // // Print Joystick Values
+    // Print Joystick Values
     // if (millis() - time_prev >= 20000)
     // {
     //     time_prev = millis();
@@ -302,7 +302,7 @@ void loop()
     //     Serial.print("\t");
     //     Serial.print(CtrlPWM);
     //     Serial.println();
-    //-----------------------------------------
+    // -----------------------------------------
 
     // Serial.print("\tJX: ");
     // Serial.print(JoyVrx);
@@ -332,29 +332,29 @@ FLOATUNION_t simulink_anglex_setpoint;
 FLOATUNION_t simulink_angley_setpoint;
 FLOATUNION_t simulink_anglez_setpoint;
 
-FLOATUNION_t simulink_kp_anglex;
-FLOATUNION_t simulink_ki_anglex;
-FLOATUNION_t simulink_kd_anglex;
+// FLOATUNION_t simulink_kp_anglex;
+// FLOATUNION_t simulink_ki_anglex;
+// FLOATUNION_t simulink_kd_anglex;
 
-FLOATUNION_t simulink_kp_angley;
-FLOATUNION_t simulink_ki_angley;
-FLOATUNION_t simulink_kd_angley;
+// FLOATUNION_t simulink_kp_angley;
+// FLOATUNION_t simulink_ki_angley;
+// FLOATUNION_t simulink_kd_angley;
 
-FLOATUNION_t simulink_kp_anglez;
-FLOATUNION_t simulink_ki_anglez;
-FLOATUNION_t simulink_kd_anglez;
+// FLOATUNION_t simulink_kp_anglez;
+// FLOATUNION_t simulink_ki_anglez;
+// FLOATUNION_t simulink_kd_anglez;
 
-FLOATUNION_t simulink_kp_gyrox;
-FLOATUNION_t simulink_ki_gyrox;
-FLOATUNION_t simulink_kd_gyrox;
+// FLOATUNION_t simulink_kp_gyrox;
+// FLOATUNION_t simulink_ki_gyrox;
+// FLOATUNION_t simulink_kd_gyrox;
 
-FLOATUNION_t simulink_kp_gyroy;
-FLOATUNION_t simulink_ki_gyroy;
-FLOATUNION_t simulink_kd_gyroy;
+// FLOATUNION_t simulink_kp_gyroy;
+// FLOATUNION_t simulink_ki_gyroy;
+// FLOATUNION_t simulink_kd_gyroy;
 
-FLOATUNION_t simulink_kp_gyroz;
-FLOATUNION_t simulink_ki_gyroz;
-FLOATUNION_t simulink_kd_gyroz;
+// FLOATUNION_t simulink_kp_gyroz;
+// FLOATUNION_t simulink_ki_gyroz;
+// FLOATUNION_t simulink_kd_gyroz;
 void SerialDataPrint()
 {
     simulink_longitude.number = Longitude;
@@ -370,29 +370,29 @@ void SerialDataPrint()
     simulink_angley_setpoint.number = JoyVry;
     simulink_anglez_setpoint.number = YawVar;
 
-    simulink_kp_anglex.number = kp_anglex;
-    simulink_ki_anglex.number = ki_anglex;
-    simulink_kd_anglex.number = kd_anglex;
+    // simulink_kp_anglex.number = kp_anglex;
+    // simulink_ki_anglex.number = ki_anglex;
+    // simulink_kd_anglex.number = kd_anglex;
 
-    simulink_kp_angley.number = kp_angley;
-    simulink_ki_angley.number = ki_angley;
-    simulink_kd_angley.number = kd_angley;
+    // simulink_kp_angley.number = kp_angley;
+    // simulink_ki_angley.number = ki_angley;
+    // simulink_kd_angley.number = kd_angley;
 
-    simulink_kp_anglez.number = kp_anglez;
-    simulink_ki_anglez.number = ki_anglez;
-    simulink_kd_anglez.number = kd_anglez;
+    // simulink_kp_anglez.number = kp_anglez;
+    // simulink_ki_anglez.number = ki_anglez;
+    // simulink_kd_anglez.number = kd_anglez;
 
-    simulink_kp_gyrox.number = kp_gyrox;
-    simulink_ki_gyrox.number = ki_gyrox;
-    simulink_kd_gyrox.number = kd_gyrox;
+    // simulink_kp_gyrox.number = kp_gyrox;
+    // simulink_ki_gyrox.number = ki_gyrox;
+    // simulink_kd_gyrox.number = kd_gyrox;
 
-    simulink_kp_gyroy.number = kp_gyroy;
-    simulink_ki_gyroy.number = ki_gyroy;
-    simulink_kd_gyroy.number = kd_gyroy;
+    // simulink_kp_gyroy.number = kp_gyroy;
+    // simulink_ki_gyroy.number = ki_gyroy;
+    // simulink_kd_gyroy.number = kd_gyroy;
 
-    simulink_kp_gyroz.number = kp_gyroz;
-    simulink_ki_gyroz.number = ki_gyroz;
-    simulink_kd_gyroz.number = kd_gyroz;
+    // simulink_kp_gyroz.number = kp_gyroz;
+    // simulink_ki_gyroz.number = ki_gyroz;
+    // simulink_kd_gyroz.number = kd_gyroz;
 
     if (micros() - time_prev >= 10000)
     {
@@ -423,47 +423,47 @@ void SerialDataPrint()
         for (int i = 0; i < 4; i++)
             Serial.write(simulink_anglez_setpoint.bytes[i]);
 
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kp_anglex.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_ki_anglex.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kd_anglex.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kp_anglex.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_ki_anglex.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kd_anglex.bytes[i]);
 
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kp_angley.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_ki_angley.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kd_angley.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kp_angley.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_ki_angley.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kd_angley.bytes[i]);
 
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kp_anglez.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_ki_anglez.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kd_anglez.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kp_anglez.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_ki_anglez.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kd_anglez.bytes[i]);
 
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kp_gyroz.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_ki_gyroz.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kd_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kp_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_ki_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kd_gyroz.bytes[i]);
 
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kp_gyroz.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_ki_gyroz.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kd_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kp_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_ki_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kd_gyroz.bytes[i]);
 
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kp_gyroz.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_ki_gyroz.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_kd_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kp_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_ki_gyroz.bytes[i]);
+        // for (int i = 0; i < 4; i++)
+        //     Serial.write(simulink_kd_gyroz.bytes[i]);
 
         Serial.print('\n');
     }

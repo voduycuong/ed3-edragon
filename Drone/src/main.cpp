@@ -48,45 +48,31 @@ typedef struct struct_msg_Sent
     double Sent_PidOutputY;
     double Sent_PidOutputZ;
 
-    double Sent_kp_anglex;
-    double Sent_ki_anglex;
-    double Sent_kd_anglex;
+    // double Sent_kp_anglex;
+    // double Sent_ki_anglex;
+    // double Sent_kd_anglex;
 
-    double Sent_kp_angley;
-    double Sent_ki_angley;
-    double Sent_kd_angley;
+    // double Sent_kp_angley;
+    // double Sent_ki_angley;
+    // double Sent_kd_angley;
 
-    double Sent_kp_anglez;
-    double Sent_ki_anglez;
-    double Sent_kd_anglez;
+    // double Sent_kp_anglez;
+    // double Sent_ki_anglez;
+    // double Sent_kd_anglez;
 
-    double Sent_kp_gyrox;
-    double Sent_ki_gyrox;
-    double Sent_kd_gyrox;
+    // double Sent_kp_gyrox;
+    // double Sent_ki_gyrox;
+    // double Sent_kd_gyrox;
 
-    double Sent_kp_gyroy;
-    double Sent_ki_gyroy;
-    double Sent_kd_gyroy;
+    // double Sent_kp_gyroy;
+    // double Sent_ki_gyroy;
+    // double Sent_kd_gyroy;
 
-    double Sent_kp_gyroz;
-    double Sent_ki_gyroz;
-    double Sent_kd_gyroz;
+    // double Sent_kp_gyroz;
+    // double Sent_ki_gyroz;
+    // double Sent_kd_gyroz;
 
 } struct_msg_Sent;
-
-// VARIABLES TO SEND
-FLOATUNION_t send_anglex;
-FLOATUNION_t send_angley;
-FLOATUNION_t send_anglez;
-FLOATUNION_t send_pid_output_x;
-FLOATUNION_t send_pid_output_y;
-FLOATUNION_t send_pid_output_z;
-FLOATUNION_t send_anglex_setpoint;
-FLOATUNION_t send_angley_setpoint;
-FLOATUNION_t send_anglez_setpoint;
-FLOATUNION_t send_gyrox_setpoint;
-FLOATUNION_t send_gyroy_setpoint;
-FLOATUNION_t send_gyroz_setpoint;
 
 // Declare the structure
 struct_msg_Receive Receive_Data;
@@ -165,25 +151,25 @@ void loop()
     Sent_Data.Sent_GyroY = gyroy;
     Sent_Data.Sent_GyroZ = gyroz;
 
-    Sent_Data.Sent_kp_anglex = kp_anglex;
-    Sent_Data.Sent_ki_anglex = ki_anglex;
-    Sent_Data.Sent_kd_anglex = kd_anglex;
-    Sent_Data.Sent_kp_angley = kp_angley;
-    Sent_Data.Sent_ki_angley = ki_angley;
-    Sent_Data.Sent_kd_angley = kd_angley;
-    Sent_Data.Sent_kp_anglez = kp_anglez;
-    Sent_Data.Sent_ki_anglez = ki_anglez;
-    Sent_Data.Sent_kd_anglez = kd_anglez;
+    // Sent_Data.Sent_kp_anglex = kp_anglex;
+    // Sent_Data.Sent_ki_anglex = ki_anglex;
+    // Sent_Data.Sent_kd_anglex = kd_anglex;
+    // Sent_Data.Sent_kp_angley = kp_angley;
+    // Sent_Data.Sent_ki_angley = ki_angley;
+    // Sent_Data.Sent_kd_angley = kd_angley;
+    // Sent_Data.Sent_kp_anglez = kp_anglez;
+    // Sent_Data.Sent_ki_anglez = ki_anglez;
+    // Sent_Data.Sent_kd_anglez = kd_anglez;
 
-    Sent_Data.Sent_kp_gyrox = kp_gyrox;
-    Sent_Data.Sent_ki_gyrox = ki_gyrox;
-    Sent_Data.Sent_kd_gyrox = kd_gyrox;
-    Sent_Data.Sent_kp_gyroy = kp_gyroy;
-    Sent_Data.Sent_ki_gyroy = ki_gyroy;
-    Sent_Data.Sent_kd_gyroy = kd_gyroy;
-    Sent_Data.Sent_kp_gyroz = kp_gyroz;
-    Sent_Data.Sent_ki_gyroz = ki_gyroz;
-    Sent_Data.Sent_kd_gyroz = kd_gyroz;
+    // Sent_Data.Sent_kp_gyrox = kp_gyrox;
+    // Sent_Data.Sent_ki_gyrox = ki_gyrox;
+    // Sent_Data.Sent_kd_gyrox = kd_gyrox;
+    // Sent_Data.Sent_kp_gyroy = kp_gyroy;
+    // Sent_Data.Sent_ki_gyroy = ki_gyroy;
+    // Sent_Data.Sent_kd_gyroy = kd_gyroy;
+    // Sent_Data.Sent_kp_gyroz = kp_gyroz;
+    // Sent_Data.Sent_ki_gyroz = ki_gyroz;
+    // Sent_Data.Sent_kd_gyroz = kd_gyroz;
 
     // if (micros() - time_prev_serial >= 20000)
     // {
