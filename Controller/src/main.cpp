@@ -47,9 +47,9 @@ double kp_anglex = 0.5;
 double ki_anglex = 0.03;
 double kd_anglex = 0.001;
 
-double kp_angley = 0.5;
-double ki_angley = 0.03;
-double kd_angley = 0.001;
+double kp_angley = kp_anglex;
+double ki_angley = ki_anglex;
+double kd_angley = kd_anglex;
 
 double kp_anglez = 1.0;
 double ki_anglez = 0.0;
@@ -60,9 +60,9 @@ double kp_gyrox = 2;
 double ki_gyrox = 0.02;
 double kd_gyrox = 0.002;
 
-double kp_gyroy = 2;
-double ki_gyroy = 0.02;
-double kd_gyroy = 0.002;
+double kp_gyroy = kp_gyrox;
+double ki_gyroy = ki_gyrox;
+double kd_gyroy = kd_gyrox;
 
 double kp_gyroz = 1.0;
 double ki_gyroz = 0.0;
