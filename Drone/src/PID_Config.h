@@ -49,13 +49,13 @@ double ki_gyroz;
 double kd_gyroz;
 
 // From the remote controller
-double anglex_setpoint = 0;
-double angley_setpoint = 0;
-double anglez_setpoint = 0;
+extern double anglex_setpoint;
+extern double angley_setpoint;
+extern double anglez_setpoint;
 
-double gyrox_setpoint = 0;
-double gyroy_setpoint = 0;
-double gyroz_setpoint = 0;
+double gyrox_setpoint;
+double gyroy_setpoint;
+double gyroz_setpoint;
 
 // Inner loop (fast)
 PID gyroxPID(&gyrox, &pid_output_x, &gyrox_setpoint, kp_gyrox, ki_gyrox, kd_gyroz, DIRECT);

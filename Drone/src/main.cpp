@@ -20,6 +20,10 @@
 #define RXD2 16
 #define TXD2 17
 
+double anglex_setpoint;
+double angley_setpoint;
+double anglez_setpoint;
+
 // MAC address of Controller
 uint8_t controllerAddress[] = {0x48, 0xE7, 0x29, 0x9F, 0xDE, 0x7C};
 
@@ -76,6 +80,10 @@ typedef struct struct_msg_Receive
     double Receive_kp_gyroz;
     double Receive_ki_gyroz;
     double Receive_kd_gyroz;
+
+    double Receive_anglex_setpoint;
+    double Receive_angley_setpoint;
+    double Receive_anglez_setpoint;
 } struct_msg_Receive;
 
 // Define the outgoing data
@@ -117,7 +125,7 @@ void setup()
 // ================================================================
 void loop()
 {
-    // Get data from controller
+    // Receving data --------------------------------------------------------
     CtrlPWM = Receive_Data.Receive_PotValue;
     JoyVrx = Receive_Data.Receive_JoyVrx;
     JoyVry = Receive_Data.Receive_JoyVry;
@@ -144,9 +152,14 @@ void loop()
     ki_gyroz = Receive_Data.Receive_ki_gyroz;
     kd_gyroz = Receive_Data.Receive_kd_gyroz;
 
-    Get_MPUangle(); // Get the angle from the IMU sensor
-    Get_GPSData();
+    anglex_setpoint = Receive_Data.Receive_anglex_setpoint;
+    angley_setpoint = Receive_Data.Receive_angley_setpoint;
+    anglez_setpoint = Receive_Data.Receive_anglez_setpoint;
+    // End of receving data --------------------------------------------------------
+
+    Get_MPUangle();  // Get the angle from the IMU sensor
     Get_accelgyro(); // Get rate from IMU sensor
+    Get_GPSData();   // Get data from GPS
     Compute_PID();   // Compute the PID output
     Run_Motor();     // Send the PID output to the motor
 
@@ -165,6 +178,14 @@ void loop()
 
     // Data sent over espnow
     esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
+
+    // // Debugging
+    // Serial.print(anglex_setpoint);
+    // Serial.print("\t");
+    // Serial.print(angley_setpoint);
+    // Serial.print("\t");
+    // Serial.print(anglez_setpoint);
+    // Serial.println();
 }
 
 // ================================================================

@@ -28,7 +28,6 @@ int JoyVrx = 0;
 int JoyVry = 0;
 bool Button1State = false;
 bool Button2State = false;
-int YawVar = 0;
 
 // GPS
 double Longitude = 0;
@@ -69,6 +68,10 @@ double kp_gyroz = 1.0;
 double ki_gyroz = 0.0;
 double kd_gyroz = 0.001;
 
+double anglex_setpoint = 0;
+double angley_setpoint = 0;
+double anglez_setpoint = 0;
+
 // Variables for calibrate joystick
 int xMin = 0;
 int xMid = 1873;
@@ -87,6 +90,7 @@ void SerialDataWrite(); // Data from Drone to Controller
 void Init_ESPNOW();     // Function to init esp-now connection
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
+void teleplot_monitor(); // Monitor data through Teleplot
 
 // Define the outgoing data
 typedef struct struct_msg_Sent
@@ -116,6 +120,10 @@ typedef struct struct_msg_Sent
     double Sent_kp_gyroz;
     double Sent_ki_gyroz;
     double Sent_kd_gyroz;
+
+    double anglex_setpoint;
+    double angley_setpoint;
+    double anglez_setpoint;
 
 } struct_msg_Sent;
 
@@ -248,6 +256,12 @@ void loop()
     Sent_Data.Sent_kp_gyroz = kp_gyroz;
     Sent_Data.Sent_ki_gyroz = ki_gyroz;
     Sent_Data.Sent_kd_gyroz = kd_gyroz;
+
+    // Setpoints
+    Sent_Data.anglex_setpoint = anglex_setpoint;
+    Sent_Data.angley_setpoint = angley_setpoint;
+    Sent_Data.anglez_setpoint = anglez_setpoint;
+
     // End of sending data ---------------------------------------------------------------
 
     // Read the pot, map the reading from [0, 4095] to [0, 180]
@@ -257,17 +271,7 @@ void loop()
     JoyVrx = analogRead(JOYSTICK_VRX_PIN);
     JoyVry = analogRead(JOYSTICK_VRY_PIN);
 
-    // Read Button States
-    Button1State = digitalRead(BUTTON_1_PIN); // Button is active-high
-    Button2State = digitalRead(BUTTON_2_PIN); // Button is active-high
-
-    // Set Yaw value through 2 buttons
-    if (Button1State)
-        YawVar--;
-    if (Button2State)
-        YawVar++;
-
-    // Calibrate joystick
+    // Mapping joystick
     if (JoyVrx < xMid)
         xMapped = map(JoyVrx, xMin, xMid, 0, 2047);
     else
@@ -277,6 +281,32 @@ void loop()
         yMapped = map(JoyVry, yMin, yMid, 0, 2047);
     else
         yMapped = map(JoyVry, yMid, yMax, 2047, 4095);
+
+    // Read Button States
+    Button1State = digitalRead(BUTTON_1_PIN); // Button is active-high
+    Button2State = digitalRead(BUTTON_2_PIN); // Button is active-high
+
+    // Set Roll value
+    if (xMapped > 0 && xMapped < 1990)
+        anglex_setpoint -= 0.5;
+    if (xMapped > 1990 && xMapped < 2100)
+        anglex_setpoint = 0;
+    if (xMapped > 2100 && xMapped < 4095)
+        anglex_setpoint += 0.5;
+
+    // Set Pitch value
+    if (yMapped > 0 && yMapped < 1990)
+        angley_setpoint -= 0.5;
+    if (yMapped > 1990 && yMapped < 2100)
+        angley_setpoint = 0;
+    if (yMapped > 2010 && yMapped < 4095)
+        angley_setpoint += 0.5;
+
+    // Set Yaw value through buttons
+    if (Button1State)
+        anglez_setpoint -= 0.5;
+    if (Button2State)
+        anglez_setpoint += 0.5;
 
     // Data sent over espnow
     esp_now_send(droneAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
@@ -294,31 +324,15 @@ void loop()
     GyroX = Receive_Data.Receive_GyroX;
     GyroY = Receive_Data.Receive_GyroY;
     GyroZ = Receive_Data.Receive_GyroZ;
+
     // End of receiving data ---------------------------------------------------------------
 
     if (micros() - time_prev_serial >= 20000)
     {
         time_prev_serial = micros();
-        // SerialDataPrint(); // Print data on the serial monitor for debugging
-
-        // Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
-
-        Serial.print("P_angle_X: ");
-        Serial.println(kp_anglex);
-        Serial.print("I_angle_X: ");
-        Serial.println(ki_anglex);
-        Serial.print("D_angle_X: ");
-        Serial.println(kd_anglex);
-
-        Serial.print(">AngleX:");
-        Serial.println(AngleX);
-        Serial.print(">AngleY:");
-        Serial.println(AngleY);
-
-        Serial.print(">Setpoint:");
-        Serial.println(0);
-
+        // SerialDataPrint(); // Transfer data to Simulink
         SerialDataWrite();
+        teleplot_monitor();
     }
 }
 
@@ -340,7 +354,7 @@ void SerialDataPrint()
     simulink_gyroz.number = GyroZ;
     simulink_anglex_setpoint.number = JoyVrx;
     simulink_angley_setpoint.number = JoyVry;
-    simulink_anglez_setpoint.number = YawVar;
+    simulink_anglez_setpoint.number = anglez_setpoint;
 
     simulink_kp_anglex.number = kp_anglex;
     simulink_ki_anglex.number = ki_anglex;
@@ -555,4 +569,58 @@ void SerialDataWrite()
     modification = "";
     value = "";
     option = "";
+}
+
+void teleplot_monitor()
+{
+    Serial.print(">AngleX:");
+    Serial.println(AngleX);
+    Serial.print(">AngleY:");
+    Serial.println(AngleY);
+    Serial.print(">AngleZ:");
+    Serial.println(AngleZ);
+
+    Serial.print(">SetpointX:");
+    Serial.println(anglex_setpoint);
+    Serial.print(">SetpointY:");
+    Serial.println(angley_setpoint);
+    Serial.print(">SetpointZ:");
+    Serial.println(anglez_setpoint);
+
+    Serial.print(">pAX:");
+    Serial.println(kp_anglex);
+    Serial.print(">iAX:");
+    Serial.println(ki_anglex);
+    Serial.print(">dAX:");
+    Serial.println(kd_anglex);
+    Serial.print(">pAY:");
+    Serial.println(kp_angley);
+    Serial.print(">iAY:");
+    Serial.println(ki_angley);
+    Serial.print(">dAY:");
+    Serial.println(kd_angley);
+    Serial.print(">pAZ:");
+    Serial.println(kp_anglez);
+    Serial.print(">iAZ:");
+    Serial.println(ki_anglez);
+    Serial.print(">dAZ:");
+    Serial.println(kd_anglez);
+    Serial.print(">pGX:");
+    Serial.println(kp_gyrox);
+    Serial.print(">iGX:");
+    Serial.println(ki_gyrox);
+    Serial.print(">dGX:");
+    Serial.println(kd_gyrox);
+    Serial.print(">pGY:");
+    Serial.println(kp_gyroy);
+    Serial.print(">iGY:");
+    Serial.println(ki_gyroy);
+    Serial.print(">dGY:");
+    Serial.println(kd_gyroy);
+    Serial.print(">pGZ:");
+    Serial.println(kp_gyroz);
+    Serial.print(">iGZ:");
+    Serial.println(ki_gyroz);
+    Serial.print(">dGZ:");
+    Serial.println(kd_gyroz);
 }
