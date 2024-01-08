@@ -96,10 +96,6 @@ void teleplot_monitor(); // Monitor data through Teleplot
 typedef struct struct_msg_Sent
 {
     int Sent_PotAngle;
-    int Sent_JoyVrx;
-    int Sent_JoyVry;
-    bool Sent_Button1State;
-    bool Sent_Button2State;
 
     double Sent_kp_anglex;
     double Sent_ki_anglex;
@@ -140,31 +136,6 @@ typedef struct struct_msg_Receive
     double Receive_GyroX;
     double Receive_GyroY;
     double Receive_GyroZ;
-
-    double Receive_PidOutputX;
-    double Receive_PidOutputY;
-    double Receive_PidOutputZ;
-
-    double Receive_kp_anglex;
-    double Receive_ki_anglex;
-    double Receive_kd_anglex;
-    double Receive_kp_angley;
-    double Receive_ki_angley;
-    double Receive_kd_angley;
-    double Receive_kp_anglez;
-    double Receive_ki_anglez;
-    double Receive_kd_anglez;
-
-    double Receive_kp_gyrox;
-    double Receive_ki_gyrox;
-    double Receive_kd_gyrox;
-    double Receive_kp_gyroy;
-    double Receive_ki_gyroy;
-    double Receive_kd_gyroy;
-    double Receive_kp_gyroz;
-    double Receive_ki_gyroz;
-    double Receive_kd_gyroz;
-
 } struct_msg_Receive;
 
 // Declare the structure
@@ -227,14 +198,6 @@ void loop()
     // Throttle (Potentiometer)
     Sent_Data.Sent_PotAngle = CtrlPWM;
 
-    // Roll-Pitch (Joystick)
-    Sent_Data.Sent_JoyVrx = xMapped;
-    Sent_Data.Sent_JoyVry = yMapped;
-
-    // Yaw (2 Buttons)
-    Sent_Data.Sent_Button1State = Button1State;
-    Sent_Data.Sent_Button2State = Button2State;
-
     // PID for angle (for sending)
     Sent_Data.Sent_kp_anglex = kp_anglex;
     Sent_Data.Sent_ki_anglex = ki_anglex;
@@ -288,25 +251,25 @@ void loop()
 
     // Set Roll value
     if (xMapped > 0 && xMapped < 1990)
-        anglex_setpoint -= 0.5;
+        anglex_setpoint = 0;
     if (xMapped > 1990 && xMapped < 2100)
         anglex_setpoint = 0;
     if (xMapped > 2100 && xMapped < 4095)
-        anglex_setpoint += 0.5;
+        anglex_setpoint = 0;
 
     // Set Pitch value
     if (yMapped > 0 && yMapped < 1990)
-        angley_setpoint -= 0.5;
+        angley_setpoint = 0;
     if (yMapped > 1990 && yMapped < 2100)
         angley_setpoint = 0;
     if (yMapped > 2010 && yMapped < 4095)
-        angley_setpoint += 0.5;
+        angley_setpoint = 0;
 
     // Set Yaw value through buttons
     if (Button1State)
-        anglez_setpoint -= 0.5;
+        anglez_setpoint = 0;
     if (Button2State)
-        anglez_setpoint += 0.5;
+        anglez_setpoint = 0;
 
     // Data sent over espnow
     esp_now_send(droneAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
@@ -333,6 +296,9 @@ void loop()
         // SerialDataPrint(); // Transfer data to Simulink
         SerialDataWrite();
         teleplot_monitor();
+
+        // Debugging
+        Serial.println(CtrlPWM);
     }
 }
 
@@ -579,6 +545,13 @@ void teleplot_monitor()
     Serial.println(AngleY);
     Serial.print(">AngleZ:");
     Serial.println(AngleZ);
+
+    Serial.print(">GyroX:");
+    Serial.println(GyroX);
+    Serial.print(">GyroY:");
+    Serial.println(GyroY);
+    Serial.print(">GyroZ:");
+    Serial.println(GyroZ);
 
     Serial.print(">SetpointX:");
     Serial.println(anglex_setpoint);

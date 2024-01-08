@@ -54,12 +54,7 @@ void DisplayInfo();
 // Define the incoming data
 typedef struct struct_msg_Receive
 {
-    //
     int Receive_PotValue;
-    int Receive_JoyVrx;
-    int Receive_JoyVry;
-    bool Receive_Button1State;
-    bool Receive_Button2State;
 
     double Receive_kp_anglex;
     double Receive_ki_anglex;
@@ -98,9 +93,6 @@ typedef struct struct_msg_Sent
     double Sent_GyroX;
     double Sent_GyroY;
     double Sent_GyroZ;
-    double Sent_PidOutputX;
-    double Sent_PidOutputY;
-    double Sent_PidOutputZ;
 
 } struct_msg_Sent;
 
@@ -126,12 +118,10 @@ void setup()
 void loop()
 {
     // Receving data --------------------------------------------------------
+    // Thrust value from potentiometer
     CtrlPWM = Receive_Data.Receive_PotValue;
-    JoyVrx = Receive_Data.Receive_JoyVrx;
-    JoyVry = Receive_Data.Receive_JoyVry;
-    Button1State = Receive_Data.Receive_Button1State;
-    Button2State = Receive_Data.Receive_Button2State;
 
+    // PID config for angle
     kp_anglex = Receive_Data.Receive_kp_anglex;
     ki_anglex = Receive_Data.Receive_ki_anglex;
     kd_anglex = Receive_Data.Receive_kd_anglex;
@@ -142,6 +132,7 @@ void loop()
     ki_anglez = Receive_Data.Receive_ki_anglez;
     kd_anglez = Receive_Data.Receive_kd_anglez;
 
+    // PID config for rate
     kp_gyrox = Receive_Data.Receive_kp_gyrox;
     ki_gyrox = Receive_Data.Receive_ki_gyrox;
     kd_gyrox = Receive_Data.Receive_kd_gyrox;
@@ -152,6 +143,7 @@ void loop()
     ki_gyroz = Receive_Data.Receive_ki_gyroz;
     kd_gyroz = Receive_Data.Receive_kd_gyroz;
 
+    // Setpoints
     anglex_setpoint = Receive_Data.Receive_anglex_setpoint;
     angley_setpoint = Receive_Data.Receive_angley_setpoint;
     anglez_setpoint = Receive_Data.Receive_anglez_setpoint;
@@ -164,10 +156,12 @@ void loop()
     Run_Motor();     // Send the PID output to the motor
 
     // Sending data ---------------------------------------------------------------
+    // GPS data
     Sent_Data.Sent_Longitude = 0;
     Sent_Data.Sent_Latitude = 0;
     Sent_Data.Sent_Altitude = 0;
 
+    // IMU data
     Sent_Data.Sent_AngleX = anglex;
     Sent_Data.Sent_AngleY = angley;
     Sent_Data.Sent_AngleZ = anglez;
@@ -180,12 +174,67 @@ void loop()
     esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
 
     // // Debugging
-    // Serial.print(anglex_setpoint);
-    // Serial.print("\t");
-    // Serial.print(angley_setpoint);
-    // Serial.print("\t");
-    // Serial.print(anglez_setpoint);
-    // Serial.println();
+    // if (micros() - time_prev >= 50000)
+    // {
+    //     time_prev = micros();
+
+    //     Serial.print(pid_output_x);
+    //     Serial.print("\t");
+    //     Serial.print(pid_output_y);
+    //     Serial.print("\t");
+    //     Serial.print(pid_output_z);
+    //     Serial.println();
+    //     Serial.print(anglex_setpoint);
+    //     Serial.print("\t");
+    //     Serial.print(angley_setpoint);
+    //     Serial.print("\t");
+    //     Serial.print(anglez_setpoint);
+    //     Serial.println();
+
+    //     Serial.println(CtrlPWM);
+
+    //     Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
+
+    //     Serial.print(kp_anglex, 3);
+    //     Serial.print("\t");
+    //     Serial.print(ki_anglex, 3);
+    //     Serial.print("\t");
+    //     Serial.print(kd_anglex, 3);
+    //     Serial.print("\t\t");
+    //     Serial.print(kp_angley, 3);
+    //     Serial.print("\t");
+    //     Serial.print(ki_angley, 3);
+    //     Serial.print("\t");
+    //     Serial.print(kd_angley, 3);
+    //     Serial.print("\t\t");
+    //     Serial.print(kp_anglez, 3);
+    //     Serial.print("\t");
+    //     Serial.print(ki_anglez, 3);
+    //     Serial.print("\t");
+    //     Serial.print(kd_anglez, 3);
+
+    //     Serial.print("\n");
+
+    //     Serial.print(kp_gyrox, 3);
+    //     Serial.print("\t");
+    //     Serial.print(ki_gyrox, 3);
+    //     Serial.print("\t");
+    //     Serial.print(kd_gyrox, 3);
+    //     Serial.print("\t\t");
+    //     Serial.print(kp_gyroy, 3);
+    //     Serial.print("\t");
+    //     Serial.print(ki_gyroy, 3);
+    //     Serial.print("\t");
+    //     Serial.print(kd_gyroy, 3);
+    //     Serial.print("\t\t");
+    //     Serial.print(kp_gyroz, 3);
+    //     Serial.print("\t");
+    //     Serial.print(ki_gyroz, 3);
+    //     Serial.print("\t");
+    //     Serial.print(kd_gyroz, 3);
+
+    //     Serial.println();
+    // }
 }
 
 // ================================================================
