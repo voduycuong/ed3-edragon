@@ -22,12 +22,20 @@ uint8_t droneAddress[] = {0x48, 0xE7, 0x29, 0xA0, 0x11, 0x98};
 // Variable for espnow communication
 esp_now_peer_info_t peerInfo;
 
-// Components declaration
-int CtrlPWM = 0; // Control Signal. Varies between [0 - 180]
+// Potentiometer value
+int throttle = 0;
+
+// Joystick value
 int JoyVrx = 0;
 int JoyVry = 0;
+
+// Buttons value
 bool Button1State = false;
 bool Button2State = false;
+
+// Thresholds to avoid lose control
+double left_threshold = 0;
+double right_threshold = 0;
 
 // GPS
 double Longitude = 0;
@@ -196,7 +204,7 @@ void loop()
 {
     // Sending data ---------------------------------------------------------------
     // Throttle (Potentiometer)
-    Sent_Data.Sent_PotAngle = CtrlPWM;
+    Sent_Data.Sent_PotAngle = throttle;
 
     // PID for angle (for sending)
     Sent_Data.Sent_kp_anglex = kp_anglex;
@@ -224,11 +232,10 @@ void loop()
     Sent_Data.anglex_setpoint = anglex_setpoint;
     Sent_Data.angley_setpoint = angley_setpoint;
     Sent_Data.anglez_setpoint = anglez_setpoint;
-
     // End of sending data ---------------------------------------------------------------
 
     // Read the pot, map the reading from [0, 4095] to [0, 180]
-    CtrlPWM = map(analogRead(POT_PIN), 0, 4095, 0, 180);
+    throttle = map(analogRead(POT_PIN), 0, 4095, 0, 180);
 
     // Read Joystick Values
     JoyVrx = analogRead(JOYSTICK_VRX_PIN);
@@ -249,21 +256,31 @@ void loop()
     Button1State = digitalRead(BUTTON_1_PIN); // Button is active-high
     Button2State = digitalRead(BUTTON_2_PIN); // Button is active-high
 
-    // Set Roll value
-    if (xMapped > 0 && xMapped < 1990)
+    // Set Roll value through Joystick-X
+    if (anglex_setpoint > left_threshold && anglex_setpoint < right_threshold)
         anglex_setpoint = 0;
-    if (xMapped > 1990 && xMapped < 2100)
-        anglex_setpoint = 0;
-    if (xMapped > 2100 && xMapped < 4095)
-        anglex_setpoint = 0;
+    else
+    {
+        if (xMapped > 0 && xMapped < 1990) // Decreasing
+            anglex_setpoint = 0;
+        if (xMapped > 1990 && xMapped < 2100) // Neutral
+            anglex_setpoint = 0;
+        if (xMapped > 2100 && xMapped < 4095) // Increasing
+            anglex_setpoint = 0;
+    }
 
-    // Set Pitch value
-    if (yMapped > 0 && yMapped < 1990)
+    // Set Pitch value through Joystick-Y
+    if (angley_setpoint > left_threshold && angley_setpoint < right_threshold)
         angley_setpoint = 0;
-    if (yMapped > 1990 && yMapped < 2100)
-        angley_setpoint = 0;
-    if (yMapped > 2010 && yMapped < 4095)
-        angley_setpoint = 0;
+    else
+    {
+        if (yMapped > 0 && yMapped < 1990) // Decreasing
+            angley_setpoint = 0;
+        if (yMapped > 1990 && yMapped < 2100) // Neutral
+            angley_setpoint = 0;
+        if (yMapped > 2010 && yMapped < 4095) // Increasing
+            angley_setpoint = 0;
+    }
 
     // Set Yaw value through buttons
     if (Button1State)
@@ -298,7 +315,7 @@ void loop()
         teleplot_monitor();
 
         // Debugging
-        Serial.println(CtrlPWM);
+        Serial.println(throttle);
     }
 }
 
@@ -321,30 +338,6 @@ void SerialDataPrint()
     simulink_anglex_setpoint.number = JoyVrx;
     simulink_angley_setpoint.number = JoyVry;
     simulink_anglez_setpoint.number = anglez_setpoint;
-
-    // simulink_kp_anglex.number = kp_anglex;
-    // simulink_ki_anglex.number = ki_anglex;
-    // simulink_kd_anglex.number = kd_anglex;
-
-    // simulink_kp_angley.number = kp_angley;
-    // simulink_ki_angley.number = ki_angley;
-    // simulink_kd_angley.number = kd_angley;
-
-    // simulink_kp_anglez.number = kp_anglez;
-    // simulink_ki_anglez.number = ki_anglez;
-    // simulink_kd_anglez.number = kd_anglez;
-
-    // simulink_kp_gyrox.number = kp_gyrox;
-    // simulink_ki_gyrox.number = ki_gyrox;
-    // simulink_kd_gyrox.number = kd_gyrox;
-
-    // simulink_kp_gyroy.number = kp_gyroy;
-    // simulink_ki_gyroy.number = ki_gyroy;
-    // simulink_kd_gyroy.number = kd_gyroy;
-
-    // simulink_kp_gyroz.number = kp_gyroz;
-    // simulink_ki_gyroz.number = ki_gyroz;
-    // simulink_kd_gyroz.number = kd_gyroz;
 
     if (micros() - time_prev_serial >= 10000)
     {
@@ -374,49 +367,6 @@ void SerialDataPrint()
             Serial.write(simulink_angley_setpoint.bytes[i]);
         for (int i = 0; i < 4; i++)
             Serial.write(simulink_anglez_setpoint.bytes[i]);
-
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kp_anglex.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_ki_anglex.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kd_anglex.bytes[i]);
-
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kp_angley.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_ki_angley.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kd_angley.bytes[i]);
-
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kp_anglez.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_ki_anglez.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kd_anglez.bytes[i]);
-
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kp_gyroz.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_ki_gyroz.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kd_gyroz.bytes[i]);
-
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kp_gyroz.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_ki_gyroz.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kd_gyroz.bytes[i]);
-
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kp_gyroz.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_ki_gyroz.bytes[i]);
-        // for (int i = 0; i < 4; i++)
-        //     Serial.write(simulink_kd_gyroz.bytes[i]);
-
         Serial.print('\n');
     }
 }

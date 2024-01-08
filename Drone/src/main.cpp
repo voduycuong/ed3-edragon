@@ -20,24 +20,22 @@
 #define RXD2 16
 #define TXD2 17
 
-double anglex_setpoint;
-double angley_setpoint;
-double anglez_setpoint;
+// Initial setpoints
+double anglex_setpoint = 0;
+double angley_setpoint = 0;
+double anglez_setpoint = 0;
+
+int throttle = 0;          // Control Signal. Varies between [0 - 180]
+int JoyVrx = 0;            // X value of joy con position [0 - 4095]
+int JoyVry = 0;            // Y value of joy con position [0 - 4095]
+bool Button1State = false; // 0 - unpressed. 1 - pressed
+bool Button2State = false; // 0 - unpressed. 1 - pressed
 
 // MAC address of Controller
 uint8_t controllerAddress[] = {0x48, 0xE7, 0x29, 0x9F, 0xDE, 0x7C};
 
 // Variable for espnow communication
 esp_now_peer_info_t peerInfo;
-
-// Serial
-unsigned long time_prev_serial = 0;
-
-int CtrlPWM = 0;           // Control Signal. Varies between [0 - 180]
-int JoyVrx = 0;            // X value of joy con position [0 - 4095]
-int JoyVry = 0;            // Y value of joy con position [0 - 4095]
-bool Button1State = false; // 0 - unpressed. 1 - pressed
-bool Button2State = false; // 0 - unpressed. 1 - pressed
 
 // ================================================================
 // Function Declaration
@@ -47,9 +45,10 @@ void Init_ESC();
 void Init_ESPNOW();
 void OnDataReceive(const uint8_t *mac, const uint8_t *incomingData, int len);
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
-float floatMap(float, float, float, float, float);
 void Get_GPSData();
 void DisplayInfo();
+float floatMap(float, float, float, float, float);
+void debugging();
 
 // Define the incoming data
 typedef struct struct_msg_Receive
@@ -119,7 +118,7 @@ void loop()
 {
     // Receving data --------------------------------------------------------
     // Thrust value from potentiometer
-    CtrlPWM = Receive_Data.Receive_PotValue;
+    throttle = Receive_Data.Receive_PotValue;
 
     // PID config for angle
     kp_anglex = Receive_Data.Receive_kp_anglex;
@@ -172,69 +171,7 @@ void loop()
 
     // Data sent over espnow
     esp_now_send(controllerAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
-
-    // // Debugging
-    // if (micros() - time_prev >= 50000)
-    // {
-    //     time_prev = micros();
-
-    //     Serial.print(pid_output_x);
-    //     Serial.print("\t");
-    //     Serial.print(pid_output_y);
-    //     Serial.print("\t");
-    //     Serial.print(pid_output_z);
-    //     Serial.println();
-    //     Serial.print(anglex_setpoint);
-    //     Serial.print("\t");
-    //     Serial.print(angley_setpoint);
-    //     Serial.print("\t");
-    //     Serial.print(anglez_setpoint);
-    //     Serial.println();
-
-    //     Serial.println(CtrlPWM);
-
-    //     Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
-
-    //     Serial.print(kp_anglex, 3);
-    //     Serial.print("\t");
-    //     Serial.print(ki_anglex, 3);
-    //     Serial.print("\t");
-    //     Serial.print(kd_anglex, 3);
-    //     Serial.print("\t\t");
-    //     Serial.print(kp_angley, 3);
-    //     Serial.print("\t");
-    //     Serial.print(ki_angley, 3);
-    //     Serial.print("\t");
-    //     Serial.print(kd_angley, 3);
-    //     Serial.print("\t\t");
-    //     Serial.print(kp_anglez, 3);
-    //     Serial.print("\t");
-    //     Serial.print(ki_anglez, 3);
-    //     Serial.print("\t");
-    //     Serial.print(kd_anglez, 3);
-
-    //     Serial.print("\n");
-
-    //     Serial.print(kp_gyrox, 3);
-    //     Serial.print("\t");
-    //     Serial.print(ki_gyrox, 3);
-    //     Serial.print("\t");
-    //     Serial.print(kd_gyrox, 3);
-    //     Serial.print("\t\t");
-    //     Serial.print(kp_gyroy, 3);
-    //     Serial.print("\t");
-    //     Serial.print(ki_gyroy, 3);
-    //     Serial.print("\t");
-    //     Serial.print(kd_gyroy, 3);
-    //     Serial.print("\t\t");
-    //     Serial.print(kp_gyroz, 3);
-    //     Serial.print("\t");
-    //     Serial.print(ki_gyroz, 3);
-    //     Serial.print("\t");
-    //     Serial.print(kd_gyroz, 3);
-
-    //     Serial.println();
-    // }
+    // debugging();
 }
 
 // ================================================================
@@ -284,5 +221,71 @@ void Init_ESPNOW()
     {
         Serial.println("Failed to add peer");
         return;
+    }
+}
+
+// Function for debugging using Serial Monitor
+void debugging()
+{
+    if (micros() - time_prev >= 50000)
+    {
+        time_prev = micros();
+
+        Serial.print(pid_output_x);
+        Serial.print("\t");
+        Serial.print(pid_output_y);
+        Serial.print("\t");
+        Serial.print(pid_output_z);
+        Serial.println();
+        Serial.print(anglex_setpoint);
+        Serial.print("\t");
+        Serial.print(angley_setpoint);
+        Serial.print("\t");
+        Serial.print(anglez_setpoint);
+        Serial.println();
+
+        Serial.println(throttle);
+
+        Serial.print("\n\tROLL\t\t\t\tPITCH\t\t\t\tYAW\n");
+
+        Serial.print(kp_anglex, 3);
+        Serial.print("\t");
+        Serial.print(ki_anglex, 3);
+        Serial.print("\t");
+        Serial.print(kd_anglex, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_angley, 3);
+        Serial.print("\t");
+        Serial.print(ki_angley, 3);
+        Serial.print("\t");
+        Serial.print(kd_angley, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_anglez, 3);
+        Serial.print("\t");
+        Serial.print(ki_anglez, 3);
+        Serial.print("\t");
+        Serial.print(kd_anglez, 3);
+
+        Serial.print("\n");
+
+        Serial.print(kp_gyrox, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyrox, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyrox, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_gyroy, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyroy, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyroy, 3);
+        Serial.print("\t\t");
+        Serial.print(kp_gyroz, 3);
+        Serial.print("\t");
+        Serial.print(ki_gyroz, 3);
+        Serial.print("\t");
+        Serial.print(kd_gyroz, 3);
+
+        Serial.println();
     }
 }

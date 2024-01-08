@@ -23,39 +23,39 @@ double pid_output_y = 0;
 double pid_output_z = 0;
 
 // Angle PID gain
-double kp_anglex;
-double ki_anglex;
-double kd_anglex;
+double kp_anglex = 0;
+double ki_anglex = 0;
+double kd_anglex = 0;
 
-double kp_angley;
-double ki_angley;
-double kd_angley;
+double kp_angley = 0;
+double ki_angley = 0;
+double kd_angley = 0;
 
-double kp_anglez;
-double ki_anglez;
-double kd_anglez;
+double kp_anglez = 0;
+double ki_anglez = 0;
+double kd_anglez = 0;
 
 // Rate PID gain
-double kp_gyrox;
-double ki_gyrox;
-double kd_gyrox;
+double kp_gyrox = 0;
+double ki_gyrox = 0;
+double kd_gyrox = 0;
 
-double kp_gyroy;
-double ki_gyroy;
-double kd_gyroy;
+double kp_gyroy = 0;
+double ki_gyroy = 0;
+double kd_gyroy = 0;
 
-double kp_gyroz;
-double ki_gyroz;
-double kd_gyroz;
+double kp_gyroz = 0;
+double ki_gyroz = 0;
+double kd_gyroz = 0;
 
 // From the remote controller
 extern double anglex_setpoint;
 extern double angley_setpoint;
 extern double anglez_setpoint;
 
-double gyrox_setpoint;
-double gyroy_setpoint;
-double gyroz_setpoint;
+double gyrox_setpoint = 0;
+double gyroy_setpoint = 0;
+double gyroz_setpoint = 0;
 
 // Inner loop (fast)
 PID gyroxPID(&gyrox, &pid_output_x, &gyrox_setpoint, kp_gyrox, ki_gyrox, kd_gyroz, DIRECT);

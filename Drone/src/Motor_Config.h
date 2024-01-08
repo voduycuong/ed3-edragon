@@ -9,7 +9,7 @@
 #define MAX_SIGNAL 2000 // Parameter required for ESC definition
 #define MIN_SIGNAL 1000 // Parameter required for the ESC definition
 
-extern int CtrlPWM;
+extern int throttle;
 
 extern double pid_output_x;
 extern double pid_output_y;
@@ -31,8 +31,8 @@ void Init_ESC()
 void Run_Motor()
 {
     // Send command to ESCs
-    ESC_1.write(CtrlPWM - pid_output_x + pid_output_y + pid_output_z); // FL
-    ESC_2.write(CtrlPWM - pid_output_x - pid_output_y - pid_output_z); // RL
-    ESC_3.write(CtrlPWM + pid_output_x + pid_output_y - pid_output_z); // FR
-    ESC_4.write(CtrlPWM + pid_output_x - pid_output_y + pid_output_z); // RR
+    ESC_1.write(throttle - pid_output_x + pid_output_y + pid_output_z); // FL
+    ESC_2.write(throttle - pid_output_x - pid_output_y - pid_output_z); // RL
+    ESC_3.write(throttle + pid_output_x + pid_output_y - pid_output_z); // FR
+    ESC_4.write(throttle + pid_output_x - pid_output_y + pid_output_z); // RR
 }
