@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <Wire.h>
-unsigned long time_prev = 0;
+
+// Serial
+unsigned long time_prev_serial = 0;
 
 typedef union
 {

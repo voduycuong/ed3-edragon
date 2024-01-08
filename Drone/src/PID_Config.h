@@ -9,10 +9,6 @@ extern double gyrox;
 extern double gyroy;
 extern double gyroz;
 
-double motor_cmd_x = 0;
-double motor_cmd_y = 0;
-double motor_cmd_z = 0;
-
 // ================================================================
 // Variable declaration
 // ================================================================
@@ -26,40 +22,40 @@ double pid_output_x = 0;
 double pid_output_y = 0;
 double pid_output_z = 0;
 
-// Init gain of angle
-double kp_anglex = 0.0;
-double ki_anglex = 0.0;
-double kd_anglex = 0.0;
+// Angle PID gain
+double kp_anglex;
+double ki_anglex;
+double kd_anglex;
 
-double kp_angley = 0.0;
-double ki_angley = 0.0;
-double kd_angley = 0.0;
+double kp_angley;
+double ki_angley;
+double kd_angley;
 
-double kp_anglez = 0.0;
-double ki_anglez = 0.0;
-double kd_anglez = 0.0;
+double kp_anglez;
+double ki_anglez;
+double kd_anglez;
 
-// Init gain of rate
-double kp_gyrox = 2.0;
-double ki_gyrox = 0.0;
-double kd_gyrox = 0.001;
+// Rate PID gain
+double kp_gyrox;
+double ki_gyrox;
+double kd_gyrox;
 
-double kp_gyroy = 2.0;
-double ki_gyroy = 0.0;
-double kd_gyroy = 0.001;
+double kp_gyroy;
+double ki_gyroy;
+double kd_gyroy;
 
-double kp_gyroz = 0.0;
-double ki_gyroz = 0.0;
-double kd_gyroz = 0.0;
+double kp_gyroz;
+double ki_gyroz;
+double kd_gyroz;
 
 // From the remote controller
-double anglex_setpoint = 0;
-double angley_setpoint = 0;
-double anglez_setpoint = 0;
+extern double anglex_setpoint;
+extern double angley_setpoint;
+extern double anglez_setpoint;
 
-double gyrox_setpoint = 0;
-double gyroy_setpoint = 0;
-double gyroz_setpoint = 0;
+double gyrox_setpoint;
+double gyroy_setpoint;
+double gyroz_setpoint;
 
 // Inner loop (fast)
 PID gyroxPID(&gyrox, &pid_output_x, &gyrox_setpoint, kp_gyrox, ki_gyrox, kd_gyroz, DIRECT);
@@ -124,9 +120,5 @@ void Compute_PID()
     gyroxPID.Compute();
     gyroyPID.Compute();
     gyrozPID.Compute();
-
-    // motor_cmd_x = map(pid_output_x, -90, 90, 0, 180);
-    // motor_cmd_y = map(pid_output_y, -90, 90, 0, 180);
-    // motor_cmd_z = map(pid_output_z, -90, 90, 0, 180);
 }
 // ================================================================

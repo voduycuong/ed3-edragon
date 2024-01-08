@@ -1,0 +1,548 @@
+{
+    "widgets": [
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "pAX",
+                    "sourceNames": [
+                        "pAX"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "pAY",
+                    "sourceNames": [
+                        "pAY"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "pAZ",
+                    "sourceNames": [
+                        "pAZ"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "pGX",
+                    "sourceNames": [
+                        "pGX"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "pGY",
+                    "sourceNames": [
+                        "pGY"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "pAZ",
+                    "sourceNames": [
+                        "pAZ"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "iAX",
+                    "sourceNames": [
+                        "iAX"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "iAY",
+                    "sourceNames": [
+                        "iAY"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "iAZ",
+                    "sourceNames": [
+                        "iAZ"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "iGX",
+                    "sourceNames": [
+                        "iGX"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "iGY",
+                    "sourceNames": [
+                        "iGY"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "iGZ",
+                    "sourceNames": [
+                        "iGZ"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "dAX",
+                    "sourceNames": [
+                        "dAX"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "dAY",
+                    "sourceNames": [
+                        "dAY"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "dAZ",
+                    "sourceNames": [
+                        "dAZ"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "dGX",
+                    "sourceNames": [
+                        "dGX"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "dGY",
+                    "sourceNames": [
+                        "dGY"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "single_value_number",
+            "gridPos": {
+                "h": 2,
+                "w": 2,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "dGZ",
+                    "sourceNames": [
+                        "dGZ"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                }
+            ],
+            "precision_mode": 0
+        },
+        {
+            "type": "chart",
+            "gridPos": {
+                "h": 7,
+                "w": 4,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "AngleX",
+                    "sourceNames": [
+                        "AngleX"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "_serie": "AngleX",
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                },
+                {
+                    "name": "SetpointX",
+                    "sourceNames": [
+                        "SetpointX"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "_serie": "SetpointX",
+                        "stroke": "rgba(52,152,219,1)",
+                        "fill": "rgba(52,152,219,0.1)"
+                    },
+                    "type": "number"
+                }
+            ]
+        },
+        {
+            "type": "chart",
+            "gridPos": {
+                "h": 7,
+                "w": 4,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "AngleY",
+                    "sourceNames": [
+                        "AngleY"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "_serie": "AngleY",
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                },
+                {
+                    "name": "SetpointY",
+                    "sourceNames": [
+                        "SetpointY"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "_serie": "SetpointY",
+                        "stroke": "rgba(52,152,219,1)",
+                        "fill": "rgba(52,152,219,0.1)"
+                    },
+                    "type": "number"
+                }
+            ]
+        },
+        {
+            "type": "chart",
+            "gridPos": {
+                "h": 7,
+                "w": 4,
+                "x": 0,
+                "y": 0
+            },
+            "series": [
+                {
+                    "name": "AngleZ",
+                    "sourceNames": [
+                        "AngleZ"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "_serie": "AngleZ",
+                        "stroke": "rgba(231,76,60,1)",
+                        "fill": "rgba(231,76,60,0.1)"
+                    },
+                    "type": "number"
+                },
+                {
+                    "name": "SetpointZ",
+                    "sourceNames": [
+                        "SetpointZ"
+                    ],
+                    "formula": "",
+                    "options": {
+                        "_serie": "SetpointZ",
+                        "stroke": "rgba(52,152,219,1)",
+                        "fill": "rgba(52,152,219,0.1)"
+                    },
+                    "type": "number"
+                }
+            ]
+        }
+    ],
+    "viewDuration": "10"
+}

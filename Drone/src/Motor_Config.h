@@ -15,10 +15,6 @@ extern double pid_output_x;
 extern double pid_output_y;
 extern double pid_output_z;
 
-extern double motor_cmd_x;
-extern double motor_cmd_y;
-extern double motor_cmd_z;
-
 Servo ESC_1; // Define ESC (Rear Right)
 Servo ESC_2; // Define ESC (Front Right)
 Servo ESC_3; // Define ESC (Rear Left)
@@ -39,16 +35,4 @@ void Run_Motor()
     ESC_2.write(CtrlPWM - pid_output_x - pid_output_y - pid_output_z); // RL
     ESC_3.write(CtrlPWM + pid_output_x + pid_output_y - pid_output_z); // FR
     ESC_4.write(CtrlPWM + pid_output_x - pid_output_y + pid_output_z); // RR
-
-    // // Send command to ESCs - use Mapping
-    // ESC_1.write(CtrlPWM - motor_cmd_x + motor_cmd_y + motor_cmd_z); // FL
-    // ESC_2.write(CtrlPWM - motor_cmd_x - motor_cmd_y - motor_cmd_z); // RL
-    // ESC_3.write(CtrlPWM + motor_cmd_x + motor_cmd_y - motor_cmd_z); // FR
-    // ESC_4.write(CtrlPWM + motor_cmd_x - motor_cmd_y + motor_cmd_z); // RR
-
-    // // Run all 4 motors
-    // ESC_1.write(CtrlPWM);
-    // ESC_2.write(CtrlPWM);
-    // ESC_3.write(CtrlPWM);
-    // ESC_4.write(CtrlPWM);
 }
