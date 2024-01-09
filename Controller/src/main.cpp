@@ -33,9 +33,8 @@ int JoyVry = 0;
 bool Button1State = false;
 bool Button2State = false;
 
-// Thresholds to avoid lose control
-double left_threshold = 0;
-double right_threshold = 0;
+// Threshold to avoid lose control
+double threshold = 40;
 
 // GPS
 double Longitude = 0;
@@ -89,6 +88,7 @@ int yMid = 1820;
 int yMax = 4095;
 int xMapped = 0;
 int yMapped = 0;
+unsigned long time_prev_read_joystick = 0;
 
 // ================================================================
 // Function Declaration
@@ -248,38 +248,46 @@ void loop()
         xMapped = map(JoyVrx, xMid, xMax, 2047, 4095);
 
     if (JoyVry < yMid)
-        yMapped = map(JoyVry, yMin, yMid, 0, 2047);
+        yMapped = map(JoyVry, yMin, yMid, 4095, 2047);
     else
-        yMapped = map(JoyVry, yMid, yMax, 2047, 4095);
+        yMapped = map(JoyVry, yMid, yMax, 2047, 0);
 
     // Read Button States
     Button1State = digitalRead(BUTTON_1_PIN); // Button is active-high
     Button2State = digitalRead(BUTTON_2_PIN); // Button is active-high
 
     // Set Roll value through Joystick-X
-    if (anglex_setpoint > left_threshold && anglex_setpoint < right_threshold)
+    if (abs(AngleX) > threshold)
         anglex_setpoint = 0;
     else
     {
-        if (xMapped > 0 && xMapped < 1990) // Decreasing
-            anglex_setpoint = 0;
-        if (xMapped > 1990 && xMapped < 2100) // Neutral
-            anglex_setpoint = 0;
-        if (xMapped > 2100 && xMapped < 4095) // Increasing
-            anglex_setpoint = 0;
+        if (micros() - time_prev_read_joystick >= 20000)
+        {
+            time_prev_read_joystick = micros();
+            if (xMapped > 0 && xMapped < 1990) // Decreasing
+                anglex_setpoint -= 1;
+            if (xMapped > 1990 && xMapped < 2100) // Neutral
+                anglex_setpoint = 0;
+            if (xMapped > 2100 && xMapped < 4095) // Increasing
+                anglex_setpoint += 1;
+        }
     }
 
     // Set Pitch value through Joystick-Y
-    if (angley_setpoint > left_threshold && angley_setpoint < right_threshold)
+    if (abs(AngleY) > threshold)
         angley_setpoint = 0;
     else
     {
-        if (yMapped > 0 && yMapped < 1990) // Decreasing
-            angley_setpoint = 0;
-        if (yMapped > 1990 && yMapped < 2100) // Neutral
-            angley_setpoint = 0;
-        if (yMapped > 2010 && yMapped < 4095) // Increasing
-            angley_setpoint = 0;
+        if (micros() - time_prev_read_joystick >= 20000)
+        {
+            time_prev_read_joystick = micros();
+            if (yMapped > 0 && yMapped < 1990) // Decreasing
+                angley_setpoint -= 1;
+            if (yMapped > 1990 && yMapped < 2100) // Neutral
+                angley_setpoint = 0;
+            if (yMapped > 2010 && yMapped < 4095) // Increasing
+                angley_setpoint += 1;
+        }
     }
 
     // Set Yaw value through buttons
@@ -311,11 +319,16 @@ void loop()
     {
         time_prev_serial = micros();
         // SerialDataPrint(); // Transfer data to Simulink
-        SerialDataWrite();
-        teleplot_monitor();
+        // SerialDataWrite();
+        // teleplot_monitor();
 
         // Debugging
-        Serial.println(throttle);
+        // Serial.println(throttle);
+        // Serial.print("Jvrx:");
+        // Serial.println(xMapped);
+        Serial.print("Jvry:");
+        Serial.println(angley_setpoint);
+        Serial.println("-----------");
     }
 }
 
@@ -335,8 +348,9 @@ void SerialDataPrint()
     simulink_gyrox.number = GyroX;
     simulink_gyroy.number = GyroY;
     simulink_gyroz.number = GyroZ;
-    simulink_anglex_setpoint.number = JoyVrx;
-    simulink_angley_setpoint.number = JoyVry;
+
+    simulink_anglex_setpoint.number = anglex_setpoint;
+    simulink_angley_setpoint.number = angley_setpoint;
     simulink_anglez_setpoint.number = anglez_setpoint;
 
     if (micros() - time_prev_serial >= 10000)
