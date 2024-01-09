@@ -156,9 +156,9 @@ void loop()
 
     // Sending data ---------------------------------------------------------------
     // GPS data
-    Sent_Data.Sent_Longitude = 0;
-    Sent_Data.Sent_Latitude = 0;
-    Sent_Data.Sent_Altitude = 0;
+    Sent_Data.Sent_Longitude = gps.location.lng();
+    Sent_Data.Sent_Latitude = gps.location.lat();
+    Sent_Data.Sent_Altitude = gps.altitude.meters();
 
     // IMU data
     Sent_Data.Sent_AngleX = anglex;

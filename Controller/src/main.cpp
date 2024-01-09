@@ -34,7 +34,7 @@ bool Button1State = false;
 bool Button2State = false;
 
 // Threshold to avoid lose control
-double threshold = 40;
+double threshold = 30;
 
 // GPS
 double Longitude = 0;
@@ -50,8 +50,8 @@ double GyroY = 0;
 double GyroZ = 0;
 
 // Init gain of angle
-double kp_anglex = 0.5;
-double ki_anglex = 0.03;
+double kp_anglex = 0.4;
+double ki_anglex = 0.04;
 double kd_anglex = 0.001;
 
 double kp_angley = kp_anglex;
@@ -63,8 +63,8 @@ double ki_anglez = 0.0;
 double kd_anglez = 0.001;
 
 // Init gain of rate
-double kp_gyrox = 2;
-double ki_gyrox = 0.02;
+double kp_gyrox = 1.8;
+double ki_gyrox = 0.05;
 double kd_gyrox = 0.002;
 
 double kp_gyroy = kp_gyrox;
@@ -88,7 +88,6 @@ int yMid = 1820;
 int yMax = 4095;
 int xMapped = 0;
 int yMapped = 0;
-unsigned long time_prev_read_joystick = 0;
 
 // ================================================================
 // Function Declaration
@@ -261,16 +260,12 @@ void loop()
         anglex_setpoint = 0;
     else
     {
-        if (micros() - time_prev_read_joystick >= 20000)
-        {
-            time_prev_read_joystick = micros();
-            if (xMapped > 0 && xMapped < 1990) // Decreasing
-                anglex_setpoint -= 1;
-            if (xMapped > 1990 && xMapped < 2100) // Neutral
-                anglex_setpoint = 0;
-            if (xMapped > 2100 && xMapped < 4095) // Increasing
-                anglex_setpoint += 1;
-        }
+        if (xMapped >= 0 && xMapped < 1990) // Decreasing
+            anglex_setpoint = 0;
+        if (xMapped >= 1990 && xMapped < 2150) // Neutral
+            anglex_setpoint = 0;
+        if (xMapped >= 2150 && xMapped <= 4095) // Increasing
+            anglex_setpoint = 0;
     }
 
     // Set Pitch value through Joystick-Y
@@ -278,16 +273,12 @@ void loop()
         angley_setpoint = 0;
     else
     {
-        if (micros() - time_prev_read_joystick >= 20000)
-        {
-            time_prev_read_joystick = micros();
-            if (yMapped > 0 && yMapped < 1990) // Decreasing
-                angley_setpoint -= 1;
-            if (yMapped > 1990 && yMapped < 2100) // Neutral
-                angley_setpoint = 0;
-            if (yMapped > 2010 && yMapped < 4095) // Increasing
-                angley_setpoint += 1;
-        }
+        if (yMapped >= 0 && yMapped < 1990) // Decreasing
+            angley_setpoint = 0;
+        if (yMapped >= 1990 && yMapped < 2100) // Neutral
+            angley_setpoint = 0;
+        if (yMapped >= 2010 && yMapped <= 4095) // Increasing
+            angley_setpoint = 0;
     }
 
     // Set Yaw value through buttons
@@ -319,16 +310,15 @@ void loop()
     {
         time_prev_serial = micros();
         // SerialDataPrint(); // Transfer data to Simulink
-        // SerialDataWrite();
-        // teleplot_monitor();
+        SerialDataWrite();
+        teleplot_monitor();
 
         // Debugging
-        // Serial.println(throttle);
         // Serial.print("Jvrx:");
         // Serial.println(xMapped);
-        Serial.print("Jvry:");
-        Serial.println(angley_setpoint);
-        Serial.println("-----------");
+        // Serial.print("Jvry:");
+        // Serial.println(angley_setpoint);
+        // Serial.println("-----------");
     }
 }
 
@@ -503,6 +493,8 @@ void SerialDataWrite()
 
 void teleplot_monitor()
 {
+    Serial.println(throttle);
+
     Serial.print(">AngleX:");
     Serial.println(AngleX);
     Serial.print(">AngleY:");
