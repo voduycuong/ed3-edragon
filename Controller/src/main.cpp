@@ -15,6 +15,8 @@
 #define JOYSTICK_VRY_PIN 33 // Pin 33 atxtached to the VRY
 #define BUTTON_1_PIN 39     // Pin 39 attached to the Button 1 // Top
 #define BUTTON_2_PIN 36     // Pin 36 attached to the Button 2 // Bottom
+#define ROLL_RATE 0.5
+#define PITCH_RATE 0.5
 
 // MAC address of Drone
 uint8_t droneAddress[] = {0x48, 0xE7, 0x29, 0xA0, 0x11, 0x98};
@@ -260,12 +262,12 @@ void loop()
         anglex_setpoint = 0;
     else
     {
-        if (xMapped >= 0 && xMapped < 1990) // Decreasing
-            anglex_setpoint -= 0.1;
+        if (xMapped >= 0 && xMapped < 1990) // Roll Left
+            anglex_setpoint = -1 * ROLL_RATE;
         if (xMapped >= 1990 && xMapped < 2150) // Neutral
             anglex_setpoint = 0;
-        if (xMapped >= 2150 && xMapped <= 4095) // Increasing
-            anglex_setpoint += 0.1;
+        if (xMapped >= 2150 && xMapped <= 4095) // Roll Right
+            anglex_setpoint = ROLL_RATE;
     }
 
     // Set Pitch value through Joystick-Y
@@ -273,12 +275,12 @@ void loop()
         angley_setpoint = 0;
     else
     {
-        if (yMapped >= 0 && yMapped < 1990) // Decreasing
-            angley_setpoint -= 0.1;
+        if (yMapped >= 0 && yMapped < 1990) // Head Up
+            angley_setpoint = -1 * PITCH_RATE;
         if (yMapped >= 1990 && yMapped < 2100) // Neutral
             angley_setpoint = 0;
-        if (yMapped >= 2010 && yMapped <= 4095) // Increasing
-            angley_setpoint += 0.1;
+        if (yMapped >= 2010 && yMapped <= 4095) // Head Down
+            angley_setpoint = PITCH_RATE;
     }
 
     // Set Yaw value through buttons
