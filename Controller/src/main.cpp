@@ -306,12 +306,12 @@ void loop()
 
     // End of receiving data ---------------------------------------------------------------
 
-    if (micros() - time_prev_serial >= 20000)
+    if (micros() - time_prev_serial >= 10000)
     {
         time_prev_serial = micros();
-        // SerialDataPrint(); // Transfer data to Simulink
-        SerialDataWrite();
-        teleplot_monitor();
+        SerialDataPrint(); // Transfer data to Simulink
+        // SerialDataWrite();
+        // teleplot_monitor();
 
         // Debugging
         // Serial.print("Jvrx:");
@@ -343,36 +343,32 @@ void SerialDataPrint()
     simulink_angley_setpoint.number = angley_setpoint;
     simulink_anglez_setpoint.number = anglez_setpoint;
 
-    if (micros() - time_prev_serial >= 10000)
-    {
-        time_prev_serial = micros();
-        Serial.write('A');
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_longitude.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_latitude.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_altitude.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_anglex.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_angley.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_anglez.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_gyrox.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_gyroy.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_gyroz.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_anglex_setpoint.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_angley_setpoint.bytes[i]);
-        for (int i = 0; i < 4; i++)
-            Serial.write(simulink_anglez_setpoint.bytes[i]);
-        Serial.print('\n');
-    }
+    Serial.write('A');
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_longitude.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_latitude.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_altitude.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_anglex.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_angley.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_anglez.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_gyrox.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_gyroy.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_gyroz.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_anglex_setpoint.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_angley_setpoint.bytes[i]);
+    for (int i = 0; i < 4; i++)
+        Serial.write(simulink_anglez_setpoint.bytes[i]);
+    Serial.print('\n');
 }
 
 // ******************************************
