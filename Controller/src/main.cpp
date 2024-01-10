@@ -52,9 +52,9 @@ double GyroY = 0;
 double GyroZ = 0;
 
 // Init gain of angle
-double kp_anglex = 0.43;
-double ki_anglex = 0.052;
-double kd_anglex = 0.005;
+double kp_anglex = 0.425;
+double ki_anglex = 0.045;
+double kd_anglex = 0.007;
 
 double kp_angley = kp_anglex;
 double ki_angley = ki_anglex;
@@ -66,8 +66,8 @@ double kd_anglez = 0.001;
 
 // Init gain of rate
 double kp_gyrox = 2;
-double ki_gyrox = 0.05;
-double kd_gyrox = 0.01;
+double ki_gyrox = 0.051;
+double kd_gyrox = 0.03;
 
 double kp_gyroy = kp_gyrox;
 double ki_gyroy = ki_gyrox;
