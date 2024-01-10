@@ -35,4 +35,9 @@ void Run_Motor()
     ESC_2.write(throttle - pid_output_x - pid_output_y - pid_output_z); // RL
     ESC_3.write(throttle + pid_output_x + pid_output_y - pid_output_z); // FR
     ESC_4.write(throttle + pid_output_x - pid_output_y + pid_output_z); // RR
+
+    // ESC_1.write(throttle);
+    // ESC_2.write(throttle);
+    // ESC_3.write(throttle);
+    // ESC_4.write(throttle);
 }
