@@ -50,22 +50,22 @@ double GyroY = 0;
 double GyroZ = 0;
 
 // Init gain of angle
-double kp_anglex = 0.4;
-double ki_anglex = 0.04;
-double kd_anglex = 0.001;
+double kp_anglex = 0.43;
+double ki_anglex = 0.052;
+double kd_anglex = 0.005;
 
 double kp_angley = kp_anglex;
 double ki_angley = ki_anglex;
 double kd_angley = kd_anglex;
 
-double kp_anglez = 1.0;
+double kp_anglez = 0.5;
 double ki_anglez = 0.0;
 double kd_anglez = 0.001;
 
 // Init gain of rate
-double kp_gyrox = 1.8;
+double kp_gyrox = 2;
 double ki_gyrox = 0.05;
-double kd_gyrox = 0.002;
+double kd_gyrox = 0.01;
 
 double kp_gyroy = kp_gyrox;
 double ki_gyroy = ki_gyrox;
@@ -261,11 +261,11 @@ void loop()
     else
     {
         if (xMapped >= 0 && xMapped < 1990) // Decreasing
-            anglex_setpoint = 0;
+            anglex_setpoint -= 0.1;
         if (xMapped >= 1990 && xMapped < 2150) // Neutral
             anglex_setpoint = 0;
         if (xMapped >= 2150 && xMapped <= 4095) // Increasing
-            anglex_setpoint = 0;
+            anglex_setpoint += 0.1;
     }
 
     // Set Pitch value through Joystick-Y
@@ -274,18 +274,18 @@ void loop()
     else
     {
         if (yMapped >= 0 && yMapped < 1990) // Decreasing
-            angley_setpoint = 0;
+            angley_setpoint -= 0.1;
         if (yMapped >= 1990 && yMapped < 2100) // Neutral
             angley_setpoint = 0;
         if (yMapped >= 2010 && yMapped <= 4095) // Increasing
-            angley_setpoint = 0;
+            angley_setpoint += 0.1;
     }
 
     // Set Yaw value through buttons
     if (Button1State)
-        anglez_setpoint = 0;
+        anglez_setpoint -= 0.1;
     if (Button2State)
-        anglez_setpoint = 0;
+        anglez_setpoint += 0.1;
 
     // Data sent over espnow
     esp_now_send(droneAddress, (uint8_t *)&Sent_Data, sizeof(Sent_Data));
@@ -313,7 +313,7 @@ void loop()
         // SerialDataWrite();
         // teleplot_monitor();
 
-        // Debugging
+        // // Debugging
         // Serial.print("Jvrx:");
         // Serial.println(xMapped);
         // Serial.print("Jvry:");
